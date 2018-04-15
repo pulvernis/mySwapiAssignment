@@ -6,6 +6,17 @@
 //  Copyright © 2018 RanPulvernis. All rights reserved.
 //
 
+/* about this project:
+    - Model:
+    1. Class Using Singleton:
+    2. Struct of Character - get append to property class (array of Characters called people)
+    3. Using Alamofire:
+        A. getAllPeopleInPageSwapiApi() - method with @escaping closure
+        B. getAllMoviesUrlsAndNamesFromApi()
+ 
+ 
+*/
+
 import UIKit
 
 // Make UITableViewController conform to the protocol
@@ -17,43 +28,34 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        modelShared.getAllPeopleFromPageSwapiApi (pageNumber: 1){
-            
-            self.modelShared.getAllPeopleFromPageSwapiApi(pageNumber: 2){
-                self.tableView.reloadData()
-                self.modelShared.getTotalNumOfPeopleFromApi(completion: {
-                    // continue to retrieve all characters\people from swapi api in the background
-                    // use if let because i made him an optional int (not sure if i get it from api)
-                    if let totalPagesPeople =  self.modelShared.totalPagesOfPeopleInSwapiApi{
-                        var countToEndOfPages = 3
-                        while countToEndOfPages <= totalPagesPeople {
-                            if countToEndOfPages < totalPagesPeople {
-                                self.modelShared.getAllPeopleFromPageSwapiApi(pageNumber: countToEndOfPages, completion: {
-                                    
-                                })
-                            } else { // means countToEndOfPages = totalPagesPeople - so now we reload in completion all of the data to tbl
-                                self.modelShared.getAllPeopleFromPageSwapiApi(pageNumber: countToEndOfPages, completion: {
-                                    self.tableView.reloadData()
-                                })
-                            }
-                            
-                            countToEndOfPages+=1
-                            
-                        }
+        
+        modelShared.getAllPeopleInPageSwapiApi (pageNumber: 1){
+            self.modelShared.getAllPeopleInPageSwapiApi(pageNumber: 2){
+                self.tableView.reloadData() // reload 2 pages
+                // ** there is problem here because user need to wait if he want to scroll,
+                // ** on the other hand, user get 2 first pages quickly then if i don't reload tbl in here.
+                if let totalPagesPeople =  self.modelShared.totalPagesOfPeopleInSwapiApi{
+                    var countToEndOfPages = 3
+                    while countToEndOfPages <= totalPagesPeople {
+                        self.modelShared.getAllPeopleInPageSwapiApi(pageNumber: countToEndOfPages) {}
+                        countToEndOfPages+=1
                     }
-                })
-                
+                }
             }
-            
         }
         
-        modelShared.getAllMoviesUrlsAndNamesFromApi()
+        // TODO: maybe it will be better to load data api to Model when user click first time on cell/All Movies button, because doing too much work on background here (in viewDidLoad)
+        modelShared.getSwapiTypeFromUrlPage(swapiType: .VEHICLES, fromPage: 1, getAllNextPages: true)
+        modelShared.getSwapiTypeFromUrlPage(swapiType: .HOME_WORLD, fromPage: 1, getAllNextPages: true)
+        modelShared.getSwapiTypeFromUrlPage(swapiType: .MOVIES, fromPage: 1, getAllNextPages: true)
+        modelShared.getSwapiTypeFromUrlPage(swapiType: .STAR_SHIPS, fromPage: 1, getAllNextPages: true)
         
         
-        // MARK: NotificationCenter - addObserver
+        // MARK: NotificationCenter - addObserver/ listener
         
         NotificationCenter.default.addObserver(self, selector: #selector(characterBD(notification:)), name: .characterBirthDay, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(allCharactersArrived(notification:)), name: .allCharactersArrivedFromSwapiToModel, object: nil)
         
     }
     
@@ -61,10 +63,16 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         NotificationCenter.default.removeObserver(self)
     }
     
+    // Mark: NotificationCenter - Methods
+    
     func characterBD(notification: NSNotification) {
         print("notified")
     }
     
+    func allCharactersArrived(notification: NSNotification) {
+        print("notified tbl")
+        tableView.reloadData()
+    }
 
     // MARK: - Table view data source
 
@@ -79,29 +87,6 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
     var lastCellClickedNum: Int = 0
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        /*let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-
-        // Configure the cell - extension for UITableViewCell in Utility file
-        // todo: change image name for each row
-        //return cell.myCellDesign(cell: cell, rowNumber: indexPath.row, whichImage: "luke.jpg")
-        
-        lastCellClickedNum = indexPath.row
-        
-        let characterInRow = Model.shared.people[indexPath.row]
-        cell.textLabel?.text = "\(characterInRow.name)"
-        cell.detailTextLabel?.text = "Gender: \(characterInRow.gender)"
-        let image: UIImage = UIImage(named: "luke.jpg")!
-        cell.imageView?.image = image
-        
-        let cellSize = cell.frame.size
-        
-        let button = UIButton(frame: CGRect(x: cellSize.width*0.7, y: cellSize.height*0.1, width: cellSize.width*0.25, height: cellSize.height*0.8))
-        button.setTitle("All Movies", for: .normal)
-        button.setTitleColor(UIColor.blue, for: .normal)
-        button.setTitleColor(UIColor.red, for: .highlighted)
-        button.addTarget(cell.self, action: #selector(buttonAction), for: .touchUpInside)
-        
-        cell.addSubview(button)*/
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CharacterTableViewCell
         
@@ -111,16 +96,18 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         lastCellClickedNum = indexPath.row
         
         let characterInRow = Model.shared.people[indexPath.row]
-        //cell.textLabel?.text = "\(characterInRow.name)"
         cell.titleLabelCharacterName.text = "\(characterInRow.name)"
-        //cell.detailTextLabel?.text = "Gender: \(characterInRow.gender)"
         cell.subTitleLabelCharacterGender.text = "Gender: \(characterInRow.gender)"
+        // TODO: load the right image for each cell
         let image: UIImage = UIImage(named: "luke.jpg")!
         cell.imageviewOfCharacter.image = image
-        //cell.allMoviesBtn.titleLabel?.text = "All Movies"
         
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        modelShared.charcterRowTapped = modelShared.people[indexPath.row]
     }
     
     // The cell call this protocol method when the user taps the allMovie button
@@ -132,47 +119,6 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         performSegue(withIdentifier: "toAllMoviesCharacterSegue", sender: self)
     }
     
-    // load more data when scrolling
-    // i did it before i used loading all characters in the background by viewDidLoad
-    /*override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        
-        // 87 chatacters in total
-        if indexPath.row < 80 { // means we still not scroll to the last page, in row 79 character 80
-            let lastElement = modelShared.currentlyPeopleNum - 1
-            if indexPath.row == lastElement { // e.g after cell 19 we want to get next page of characters (10 more characters) from 20 to 29 loading to tbl
-                let nextPage = modelShared.currentlyPageNum + 1
-                modelShared.getAllPeopleFromPageSwapiApi(pageNumber: nextPage){ 
-                    tableView.reloadData()
-                }
-            }
-            
-        }
-    }*/
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-    }
-    
-    // action when click on button "All Movies" from tbl
-    /*func buttonAction(sender: UIButton!) {
-        print("Button tapped")
-        Model.shared.requestDataForCharacterMovies(rowNumberFromTbl: lastCellClickedNum )
-        
-    }*/
-    
-    
-    
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ToCharacterDetails" {
-            // Setup new view controller
-            
-
-        }
-        
-    }
-    
-
 }
 
 class CharacterTableViewCell: UITableViewCell {
@@ -195,14 +141,11 @@ class CharacterTableViewCell: UITableViewCell {
         delegate?.tableViewCellDidTapAllMoviesBtn(self) // (sender: TableViewCellDelegate)
     }
     
-    
-    
-    
-    
 }
 
 // MARK: NotificationCenter - extension to Notification.Name
 extension Notification.Name {
     static let characterBirthDay = Notification.Name("characterBirthDay")
+    static let allCharactersArrivedFromSwapiToModel = Notification.Name("allCharactersFromSwapiInModel")
     
 }

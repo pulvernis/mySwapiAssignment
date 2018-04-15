@@ -4,7 +4,23 @@
 //
 //  Created by Ran Pulvernis on 30/03/2018.
 //  Copyright © 2018 RanPulvernis. All rights reserved.
-//
+
+
+// Create Singleton: by Static Property and Private Initializer
+// Guarantees that only one instance of a class is instantiated. gives u global access and still using properties and methods of an object (not static)
+// The initializer of static properties are executed lazily by default - means that only when we use it first time it get initialized - the same happens in global variables
+
+// WHY NOT TO USE STATIC METHOD:
+// harder to test. If one static method calls another, it is difficult to override what happens in the second.
+
+// WHY SINGLETON:
+// 1.decide what happens when the instance is first accessed, via a private init()
+// 2.decide when this happens, namely when you first use it.
+// 3.much better (in terms of code readability) at keeping track of state.
+
+//  Static Methods benefit -  faster to call
+
+// Summary: use singleton when we need to do some resource intensive process - e.g: accessing db structures, managing network resources
 
 import Foundation
 import Alamofire
@@ -15,54 +31,38 @@ let baseUrl = "https://swapi.co/api/"
 
 class Model {
     
-    // Create Singleton: by Static Property and Private Initializer
-    // Guarantees that only one instance of a class is instantiated. gives u global access and still using properties and methods of an object (not static)
-    // The initializer of static properties are executed lazily by default - means that only when we use it first time it get initialized - the same happens in global variables
-    
-    // WHY NOT TO USE STATIC METHOD:
-    // harder to test. If one static method calls another, it is difficult to override what happens in the second.
-    
-    // WHY SINGLETON:
-    // 1.decide what happens when the instance is first accessed, via a private init()
-    // 2.decide when this happens, namely when you first use it.
-    // 3.much better (in terms of code readability) at keeping track of state.
-    
-    //  Static Methods benefit -  faster to call
-    
-    // Summary: use singleton when we need to do some resource intensive process - e.g: accessing db structures, managing network resources
-    
     static let shared = Model()
     
     private init() {
     }
     
-    var people:[Character] = []
-    var moviesNamesByUrlsMap:[String: String] = [:]
-    
-    var totalNumOfPeopleInSwapiApi: Int? {
+    // MARK: NotificationCenter - post on property observer didSet{} (people:[Character])
+    private (set) var people:[Character] = [] {
         didSet {
-            if let totalNumOfPeople = totalNumOfPeopleInSwapiApi {
-                totalPagesOfPeopleInSwapiApi = totalNumOfPeople/10 + 1
-                // if database was update frequently with num of people i should make an update to the ui by the controller
+            if people.count == totalNumOfPeopleInSwapiApi {
+                // send message to TableViewController that all people/characters from arrived from swapi, TableViewController have an observer/listener and will reload data on tbl
+                NotificationCenter.default.post(name: .allCharactersArrivedFromSwapiToModel, object: nil)
+            }
+        }
+    }
 
+    var totalNumOfPeopleInSwapiApi: Int? { // initialize only once - when i catch the first page of people
+        didSet {
+            if let totalNumOfPeople = totalNumOfPeopleInSwapiApi { // ambivalent to - if it's not nil
+                totalPagesOfPeopleInSwapiApi = totalNumOfPeople/10 + 1
             }
         }
     }
     
     // initialize from didSet{} when totalNumOfPeopleInSwapiApi is changing
-    var totalPagesOfPeopleInSwapiApi: Int?
+    private (set) var totalPagesOfPeopleInSwapiApi: Int?
     
-    
-    // used it in tbl to load more pages when scroll - don't need it anymore
-    // computed properties
-    /*var currentlyPageNum: Int {
-        return people.count/10
-    }*/
-    
-    
-    // because it's private (set) The only way to modify this property is via the requestData() method
+    // because it's private (set) The only way to modify those properties is via the requestData() method
     private (set) var characterMovies: [String]?
     private (set) var characterName: String?
+    
+    // set by clicking on row in tbl - will used in CharacterDetailsViewController
+    var charcterRowTapped: Character?
     
     //Once we receive data in requestData, we save it in a local variable
     func requestDataForCharacterMovies(rowNumberFromTbl: Int) {
@@ -71,7 +71,7 @@ class Model {
         let moviesUrlArr = character.moviesUrlArr
         var moviesStrArr:[String] = [] // does it matter if i do - var moviesStrArr = [String]()
         for movieUrl in moviesUrlArr {
-            if let movieStr = moviesNamesByUrlsMap[movieUrl] {
+            if let movieStr = moviesNamesByUrlsDict[movieUrl] {
                 moviesStrArr.append(movieStr)
             }
         }
@@ -81,11 +81,90 @@ class Model {
         
     }
     
-    func getAllPeopleFromPageSwapiApi(pageNumber: Int, completion:  @escaping () -> ()) {
+    func getSwapiTypeFromUrlPage(swapiType: UrlSwapiType, fromPage: Int, getAllNextPages: Bool) {
+        
+        // this inside func used after we ger result from swapi by alamofire
+        func getResultSwapiTypeUrlPage(tempNamesByUrlsDict: [String:String], swapiType: UrlSwapiType) {
+            
+            switch swapiType {
+            case .VEHICLES:
+                // for each will iterate every key value from tempDict.
+                // inside that closure we had all keys values to the other dict (vehiclesNameByUrl)
+                tempNamesByUrlsDict.forEach { self.vehiclesNamesByUrlsDict[$0] = $1 } // add dict to dict
+                print("*\nvehiclesNamesByUrlsDict: \(vehiclesNamesByUrlsDict)")
+            case .MOVIES:
+                tempNamesByUrlsDict.forEach { self.moviesNamesByUrlsDict[$0] = $1 }
+                print("*\nmoviesNamesByUrlsDict: \(moviesNamesByUrlsDict)")
+            case .STAR_SHIPS:
+                tempNamesByUrlsDict.forEach { self.starshipsNamesByUrlsDict[$0] = $1 }
+                print("*\nstarshipsNamesByUrlsDict: \(starshipsNamesByUrlsDict)")
+            case .HOME_WORLD:
+                tempNamesByUrlsDict.forEach { self.homeworldNamesByUrlsDict[$0] = $1 }
+                print("*\nhomeworldNamesByUrlsDict: \(homeworldNamesByUrlsDict)")
+            case .PEOPLE:
+                print("people")
+            }
+            
+        }
+        
+        let swapiTypeStr = swapiType.rawValue
+        let urlPage = "\(baseUrl)\(swapiTypeStr)?page=\(fromPage)"
+        Alamofire.request(urlPage).responseJSON(completionHandler: { (response) in
+            guard response.error == nil else {
+                print("Error in getting data api from url: \(urlPage), message: \(response.error?.localizedDescription)")
+                return
+            }
+            
+            if let jsonResult = response.result.value as? [String: Any] {
+                var tempNamesByUrlsDict: [String:String] = [:] // temp will get 10 urls/names per page
+                
+                if let resultArr = jsonResult["results"] as? [[String: Any]] {
+                    for (index, _) in resultArr.enumerated() {
+                        if let name = resultArr[index]["name"] as? String,
+                            let url = resultArr[index]["url"] as? String {
+                            tempNamesByUrlsDict[url] = name
+                        }
+                    }
+                    
+                }
+                
+                // invoke inside func (look up)
+                getResultSwapiTypeUrlPage(tempNamesByUrlsDict: tempNamesByUrlsDict, swapiType: swapiType)
+                
+                if getAllNextPages {
+                    
+                    if let next = jsonResult["next"] as? String {
+                        let nextPage = fromPage + 1
+                        print("*\nurlPage: \(next)")
+                        self.getSwapiTypeFromUrlPage(swapiType: swapiType, fromPage: nextPage, getAllNextPages: true) // recursion
+                    }
+                }
+            }
+        })
+        
+    }
+    
+    //MARK: Swapi Types: Dictionary properties (Vehicles, Movies, Starships, Homeworld) saved in class and can be used across the app
+    private (set) var vehiclesNamesByUrlsDict:[String:String] = [:]
+    private (set) var moviesNamesByUrlsDict:[String: String] = [:]
+    private (set) var starshipsNamesByUrlsDict:[String:String] = [:]
+    private (set) var homeworldNamesByUrlsDict:[String:String] = [:]
+    
+    enum UrlSwapiType: String {
+        case VEHICLES = "vehicles/"
+        case PEOPLE = "people/"
+        case MOVIES = "films/"
+        case STAR_SHIPS = "starships/"
+        case HOME_WORLD = "planets/"
+    }
+    
+    func getAllPeopleInPageSwapiApi(pageNumber: Int, completion:  @escaping () -> ()) {
         
         let pageNum = "?page=\(pageNumber)" // each page give 10 characters
         
         let url = "\(baseUrl)people/\(pageNum)"
+        
+        var newCharacters:[Character] = []
         
         Alamofire.request(url).responseJSON { (response) in
             
@@ -97,192 +176,50 @@ class Model {
             if let json = response.result.value as? [String:Any] {
                 //print(json)
                 
+                // first time calling initialize totalNumOfPeople
+                if self.totalNumOfPeopleInSwapiApi == nil {
+                    if let totalNumOfPeople = json["count"] as? Int {
+                        self.totalNumOfPeopleInSwapiApi = totalNumOfPeople
+                    }
+                }
+                
                 if let jsonCharactersResults = json["results"] as? [[String:Any]] {
                 
                     for (index, _) in jsonCharactersResults.enumerated(){
                         
                         let characterResults = jsonCharactersResults[index]
                         
-                        guard let name = characterResults["name"] as? String else {
-                            return
+                        guard
+                            let name = characterResults["name"] as? String,
+                            let gender = characterResults["gender"] as? String,
+                            let urlForCharacter = characterResults["url"] as? String,
+                            let height = characterResults["height"] as? String,
+                            let mass = characterResults["mass"] as? String,
+                            let eyeColor = characterResults["eye_color"] as? String,
+                            let hairColor = characterResults["hair_color"] as? String,
+                            let skinColor = characterResults["skin_color"] as? String,
+                            let birthYear = characterResults["birth_year"] as? String,
+                            let homeworldUrl = characterResults["homeworld"] as? String,
+                            let vehiclesUrlArr = characterResults["vehicles"] as? [String],
+                            let starshipsUrlArr = characterResults["starships"] as? [String],
+                            let moviesUrlArr = characterResults["films"] as? [String]
+                            else {
+                                return
                         }
-                        guard let gender = characterResults["gender"] as? String else {
-                            return
-                        }
-                        
-                        guard let urlForCharacter = characterResults["url"] as? String else {
-                            return
-                        }
-                        
-                        guard let height = characterResults["height"] as? String else {
-                            return
-                        }
-                        
-                        guard let mass = characterResults["mass"] as? String else {
-                            return
-                        }
-                        
-                        guard let eyeColor = characterResults["eye_color"] as? String else {
-                            return
-                        }
-                        
-                        guard let hairColor = characterResults["hair_color"] as? String else {
-                            return
-                        }
-                        
-                        guard let skinColor = characterResults["skin_color"] as? String else {
-                            return
-                        }
-                        
-                        guard let birthYear = characterResults["birth_year"] as? String else {
-                            return
-                        }
-                        
-                        guard let homeworldUrl = characterResults["homeworld"] as? String else {
-                            return
-                        }
-                        
-                        guard let vehiclesUrlArr = characterResults["vehicles"] as? [String] else {
-                            return
-                        }
-                        
-                        guard let starshipsUrlArr = characterResults["starships"] as? [String] else {
-                            return
-                        }
-                        
-                        guard let moviesUrlArr = characterResults["films"] as? [String] else {
-                            return
-                        }
-                        
-                        //print("*\nname: \(name), gender: \(gender)")
                         
                         let character = Character(name: name, gender: gender, urlForCharacter: urlForCharacter, height: height, mass: mass, eyeColor: eyeColor, hairColor: hairColor, skinColor: skinColor, birthYear: birthYear, homeworldUrl: homeworldUrl, vehiclesUrlArr: vehiclesUrlArr, starshipsUrlArr: starshipsUrlArr, moviesUrlArr: moviesUrlArr)
-                        self.people.append(character)
-                        //print("character: \(character)")
+                        newCharacters.append(character)
                     }
                     
+                    // add 10 characters to self.people instead 1 every time, it will make if statement inside didSet in people to check only after 10 characters is added to people property
+                    self.people.append(contentsOf: newCharacters)
                 }
             }
             
-            
-            // In here (Alamofire.request - response) - after getting and load all characters  into people: [Character] we add completion that will 'escape' from here and load it in tbl
-            completion()
-            
-        }
-        
-    }
-    
-    func getTotalNumOfPeopleFromApi(completion:  @escaping () -> ()) {
-        Alamofire.request("https://swapi.co/api/people/").responseJSON { (response) in
-            
-            guard response.error == nil  else {
-                print("*\nError retreiving data from swapi api: \(response.error.debugDescription)")
-                return
-            }
-            
-            if let json = response.result.value as? [String:Any] {
-                
-                if let jsonTotalCharactersNumResults = json["count"] as? Int {
-                    print("jsonTotalCharactersNumResults = \(jsonTotalCharactersNumResults)")
-                    self.totalNumOfPeopleInSwapiApi = jsonTotalCharactersNumResults
-                    
-                }
-            }
+            // In here (Alamofire.request - response) - after getting and load all characters  into people: [Character] we add completion that will 'escape' from here and load it in tbl in TableViewController
             completion()
         }
     }
-    
-    func getHomeworldNamesByUrl(homeworldUrlOfCharacter homeworldUrl: String) {
-        
-        Alamofire.request(homeworldUrl).responseJSON(completionHandler: { (response) in
-            guard response.error == nil else {
-                print("Error in getting data api from url: \(homeworldUrl), message: \(response.error?.localizedDescription)")
-                return
-            }
-            
-            if let json = response.result.value as? [String: Any] {
-                
-                if let homeworldStr = json["name"] as? String {
-                    print("homeworldStr: \(homeworldStr)")
-                }
-                
-            }
-            
-        })
-        
-    }
-    
-    var moviesUrlPage = "\(baseUrl)films"
-    
-    func getAllMoviesUrlsAndNamesFromApi() {
-        
-        Alamofire.request(moviesUrlPage).responseJSON(completionHandler: { (response) in
-            guard response.error == nil else {
-                print("Error in getting data api from url: \(self.homeworldUrlPage), message: \(response.error?.localizedDescription)")
-                return
-            }
-            
-            var namesByUrlsMap: [String:String] = [:]
-            
-            if let json = response.result.value as? [String: Any] {
-                
-                if let moviesArr = json["results"] as? [[String: Any]] {
-                    for (index, _) in moviesArr.enumerated() {
-                        if let name = moviesArr[index]["title"] as? String {
-                            //print("moviesArr: index\(index) - name: \(name)")
-                            if let url = moviesArr[index]["url"] as? String {
-                                //print("moviesArr: index\(index) - url: \(url)")
-                                namesByUrlsMap[url] = name
-                            }
-                        }
-                    }
-                }
-                print("*\nnamesByUrlsMap: \(namesByUrlsMap)")
-                self.moviesNamesByUrlsMap = namesByUrlsMap
-                
-                if let next = json["next"] as? String {
-                    self.homeworldUrlPage = next
-                    print("*\nhomeworldUrlPage: \(self.homeworldUrlPage)")
-                    self.getAllHomeworldNames() // recursion
-                }
-            }
-            
-        })
-        
-    }
-    
-    
-    var homeworldUrlPage = "\(baseUrl)planets/?page=1"
-    
-    func getAllHomeworldNames(/*homeworldUrlOfCharacter homeworldUrl: String*/) {
-        
-        Alamofire.request(homeworldUrlPage).responseJSON(completionHandler: { (response) in
-            guard response.error == nil else {
-                print("Error in getting data api from url: \(self.homeworldUrlPage), message: \(response.error?.localizedDescription)")
-                return
-            }
-            
-            if let json = response.result.value as? [String: Any] {
-                
-                if let homeworldArr = json["results"] as? [[String: Any]] {
-                    for (index, _) in homeworldArr.enumerated() {
-                        if let name = homeworldArr[index]["name"] as? String {
-                            print("homeworldArr: index\(index) - name: \(name)")
-                        }
-                    }
-                }
-                
-                if let next = json["next"] as? String {
-                    self.homeworldUrlPage = next
-                    print("*\nhomeworldUrlPage: \(self.homeworldUrlPage)")
-                    self.getAllHomeworldNames() // recursion
-                }
-            }
-            
-        })
-        
-    }
-    
     
 }
 
@@ -300,7 +237,78 @@ struct Character {
     let vehiclesUrlArr: [String] // need to call api again to get vehicles name chatacter owned
     let starshipsUrlArr: [String] // need to call api again to get starships names character owned
     let moviesUrlArr: [String]
+    
 }
+
+// 2 Unused Methods of Class Model
+
+/*func getAllPeopleFromSwapiApi(fromPageNumber: Int) {
+ let pageNum = "?page=\(fromPageNumber)" // each page give 10 characters
+ let url = "\(baseUrl)people/\(pageNum)"
+ 
+ Alamofire.request(url).responseJSON(completionHandler: { (response) in
+ guard response.error == nil else {
+ print("Error in getting data api from url: \(self.homeworldUrlPage), message: \(response.error?.localizedDescription)")
+ return
+ }
+ 
+ if let json = response.result.value as? [String:Any] {
+ if let jsonCharactersResults = json["results"] as? [[String:Any]] {
+ for (index, _) in jsonCharactersResults.enumerated(){
+ let characterResults = jsonCharactersResults[index]
+ 
+ guard
+ let name = characterResults["name"] as? String,
+ let gender = characterResults["gender"] as? String,
+ let urlForCharacter = characterResults["url"] as? String,
+ let height = characterResults["height"] as? String,
+ let mass = characterResults["mass"] as? String,
+ let eyeColor = characterResults["eye_color"] as? String,
+ let hairColor = characterResults["hair_color"] as? String,
+ let skinColor = characterResults["skin_color"] as? String,
+ let birthYear = characterResults["birth_year"] as? String,
+ let homeworldUrl = characterResults["homeworld"] as? String,
+ let vehiclesUrlArr = characterResults["vehicles"] as? [String],
+ let starshipsUrlArr = characterResults["starships"] as? [String],
+ let moviesUrlArr = characterResults["films"] as? [String]
+ else {
+ return
+ }
+ 
+ let character = Character(name: name, gender: gender, urlForCharacter: urlForCharacter, height: height, mass: mass, eyeColor: eyeColor, hairColor: hairColor, skinColor: skinColor, birthYear: birthYear, homeworldUrl: homeworldUrl, vehiclesUrlArr: vehiclesUrlArr, starshipsUrlArr: starshipsUrlArr, moviesUrlArr: moviesUrlArr)
+ self.people.append(character)
+ }
+ 
+ }
+ 
+ if (json["next"] as? String) != nil {
+ let nextPageNumber = fromPageNumber+1
+ self.getAllPeopleFromSwapiApi(fromPageNumber: nextPageNumber)
+ }
+ }
+ })
+ }*/
+
+/*func getHomeworldNamesByUrl(homeworldUrlOfCharacter homeworldUrl: String) {
+ 
+ Alamofire.request(homeworldUrl).responseJSON(completionHandler: { (response) in
+ guard response.error == nil else {
+ print("Error in getting data api from url: \(homeworldUrl), message: \(response.error?.localizedDescription)")
+ return
+ }
+ 
+ if let json = response.result.value as? [String: Any] {
+ 
+ if let homeworldStr = json["name"] as? String {
+ print("homeworldStr: \(homeworldStr)")
+ }
+ 
+ }
+ 
+ })
+ 
+ }*/
+
 
 
 
