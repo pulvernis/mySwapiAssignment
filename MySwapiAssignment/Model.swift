@@ -25,8 +25,6 @@
 import Foundation
 import Alamofire
 
-// MARK: - NotificationCenter: key
-let dataInModelClassDidUpdateNotification = "dataInModelClassDidUpdateNotification"
 let baseUrl = "https://swapi.co/api/"
 
 class Model {
@@ -40,8 +38,28 @@ class Model {
     private (set) var people:[Character] = [] {
         didSet {
             if people.count == totalNumOfPeopleInSwapiApi {
-                // send message to TableViewController that all people/characters from arrived from swapi, TableViewController have an observer/listener and will reload data on tbl
-                NotificationCenter.default.post(name: .allCharactersArrivedFromSwapiToModel, object: nil)
+                // notify to TableViewController that Model get all people/characters from swapi, TableViewController have an observer/listener and will reload data on tbl
+                NotificationCenter.default.post(name: .reloadTbl, object: nil)
+                // start loading images to imageByCharacterNameDict
+                for character in people {
+                    let characterName = character.name
+                    DuckDuckGoSearchController.image(for: characterName) { result in
+    
+                    }
+                    
+                }
+            }
+        }
+    }
+    
+    // images load by DuckDuck..
+    var imageByCharacterNameDict: [String: UIImage] = [:] {
+        didSet {
+            if imageByCharacterNameDict.count == people.count {
+                
+            //notify to TableViewController that Model get all images from swapi
+                NotificationCenter.default.post(name: .reloadTbl, object: nil)
+                
             }
         }
     }
@@ -91,20 +109,17 @@ class Model {
                 // for each will iterate every key value from tempDict.
                 // inside that closure we had all keys values to the other dict (vehiclesNameByUrl)
                 tempNamesByUrlsDict.forEach { self.vehiclesNamesByUrlsDict[$0] = $1 } // add dict to dict
-                print("*\nvehiclesNamesByUrlsDict: \(vehiclesNamesByUrlsDict)")
+                //print("*\nvehiclesNamesByUrlsDict: \(vehiclesNamesByUrlsDict)")
             case .MOVIES:
                 tempNamesByUrlsDict.forEach { self.moviesNamesByUrlsDict[$0] = $1 }
                 print("*\nmoviesNamesByUrlsDict: \(moviesNamesByUrlsDict)")
             case .STAR_SHIPS:
                 tempNamesByUrlsDict.forEach { self.starshipsNamesByUrlsDict[$0] = $1 }
-                print("*\nstarshipsNamesByUrlsDict: \(starshipsNamesByUrlsDict)")
+                //print("*\nstarshipsNamesByUrlsDict: \(starshipsNamesByUrlsDict)")
             case .HOME_WORLD:
                 tempNamesByUrlsDict.forEach { self.homeworldNamesByUrlsDict[$0] = $1 }
-                print("*\nhomeworldNamesByUrlsDict: \(homeworldNamesByUrlsDict)")
-            case .PEOPLE:
-                print("people")
+                //print("*\nhomeworldNamesByUrlsDict: \(homeworldNamesByUrlsDict)")
             }
-            
         }
         
         let swapiTypeStr = swapiType.rawValue
@@ -118,9 +133,14 @@ class Model {
             if let jsonResult = response.result.value as? [String: Any] {
                 var tempNamesByUrlsDict: [String:String] = [:] // temp will get 10 urls/names per page
                 
+                var name = "name"
+                if swapiType == .MOVIES { // movies/films in swapi have "title" instead of "name"
+                    name = "title"
+                }
+                
                 if let resultArr = jsonResult["results"] as? [[String: Any]] {
                     for (index, _) in resultArr.enumerated() {
-                        if let name = resultArr[index]["name"] as? String,
+                        if let name = resultArr[index][name] as? String,
                             let url = resultArr[index]["url"] as? String {
                             tempNamesByUrlsDict[url] = name
                         }
@@ -144,7 +164,7 @@ class Model {
         
     }
     
-    //MARK: Swapi Types: Dictionary properties (Vehicles, Movies, Starships, Homeworld) saved in class and can be used across the app
+    //MARK: Swapi Types: Dictionary properties (Vehicles, Movies, Starships, Homeworld) stay in class singleton and can be used across the app
     private (set) var vehiclesNamesByUrlsDict:[String:String] = [:]
     private (set) var moviesNamesByUrlsDict:[String: String] = [:]
     private (set) var starshipsNamesByUrlsDict:[String:String] = [:]
@@ -152,7 +172,7 @@ class Model {
     
     enum UrlSwapiType: String {
         case VEHICLES = "vehicles/"
-        case PEOPLE = "people/"
+        //case PEOPLE = "people/"
         case MOVIES = "films/"
         case STAR_SHIPS = "starships/"
         case HOME_WORLD = "planets/"
@@ -176,7 +196,7 @@ class Model {
             if let json = response.result.value as? [String:Any] {
                 //print(json)
                 
-                // first time calling initialize totalNumOfPeople
+                // initialize totalNumOfPeople only at first time calling
                 if self.totalNumOfPeopleInSwapiApi == nil {
                     if let totalNumOfPeople = json["count"] as? Int {
                         self.totalNumOfPeopleInSwapiApi = totalNumOfPeople

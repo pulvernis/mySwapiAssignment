@@ -18,5 +18,6 @@ import Foundation
 
 protocol TableViewCellDelegate : class {
     func tableViewCellDidTapAllMoviesBtn(_ sender: CharacterTableViewCell)
+    func tableViewCellDidTapBDBtn(_ sender: CharacterTableViewCell)
     
 }

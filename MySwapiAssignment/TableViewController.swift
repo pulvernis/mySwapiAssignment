@@ -31,9 +31,18 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         
         modelShared.getAllPeopleInPageSwapiApi (pageNumber: 1){
             self.modelShared.getAllPeopleInPageSwapiApi(pageNumber: 2){
-                self.tableView.reloadData() // reload 2 pages
-                // ** there is problem here because user need to wait if he want to scroll,
-                // ** on the other hand, user get 2 first pages quickly then if i don't reload tbl in here.
+                self.tableView.reloadData() // load 2 first pages
+                
+                //get 20 first images into cells
+                for character in self.modelShared.people {
+                    let characterName = character.name
+                    DuckDuckGoSearchController.image(for: characterName) { result in
+                        self.tableView.reloadData()
+                    }
+                    
+                }
+                
+                // ** although user need to wait if he want to scroll right away he gets 2 first pages quickly than if i first load all characters into Model and then reload tbl
                 if let totalPagesPeople =  self.modelShared.totalPagesOfPeopleInSwapiApi{
                     var countToEndOfPages = 3
                     while countToEndOfPages <= totalPagesPeople {
@@ -53,23 +62,17 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         
         // MARK: NotificationCenter - addObserver/ listener
         
-        NotificationCenter.default.addObserver(self, selector: #selector(characterBD(notification:)), name: .characterBirthDay, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(allCharactersArrived(notification:)), name: .allCharactersArrivedFromSwapiToModel, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadDataInTbl(notification:)), name: .reloadTbl, object: nil)
         
     }
     
-    deinit {
+    // Remove observer For when class is deallocate from memory
+    /*deinit {
         NotificationCenter.default.removeObserver(self)
-    }
+    }*/
     
-    // Mark: NotificationCenter - Methods
-    
-    func characterBD(notification: NSNotification) {
-        print("notified")
-    }
-    
-    func allCharactersArrived(notification: NSNotification) {
+    // Mark: NotificationCenter - Method
+    func reloadDataInTbl(notification: NSNotification) {
         print("notified tbl")
         tableView.reloadData()
     }
@@ -90,7 +93,7 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CharacterTableViewCell
         
-        // Set the cell’s delegate to the controller itself.
+        // MARK: Delegate-Style - Set the cell’s delegate to the controller itself.
         cell.delegate = self
         
         lastCellClickedNum = indexPath.row
@@ -98,10 +101,15 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         let characterInRow = Model.shared.people[indexPath.row]
         cell.titleLabelCharacterName.text = "\(characterInRow.name)"
         cell.subTitleLabelCharacterGender.text = "Gender: \(characterInRow.gender)"
-        // TODO: load the right image for each cell
-        let image: UIImage = UIImage(named: "luke.jpg")!
+        //Load the right image for each cell, if we didn't get one, set the image to be "no_image.jpg"
+        for (name, characterImage) in self.modelShared.imageByCharacterNameDict {
+            if name == characterInRow.name {
+                cell.imageviewOfCharacter.image = characterImage
+                return cell
+            }
+        }
+        let image: UIImage = UIImage(named: "no_image.jpg")!
         cell.imageviewOfCharacter.image = image
-        
         
         return cell
     }
@@ -110,7 +118,7 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         modelShared.charcterRowTapped = modelShared.people[indexPath.row]
     }
     
-    // The cell call this protocol method when the user taps the allMovie button
+    // MARK: Delegate-Style - The cell call this protocol method when the user taps the allMovie button
     func tableViewCellDidTapAllMoviesBtn(_ sender: CharacterTableViewCell) {
         guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
         print("*\nProtocol Method - tableViewCellDidTapAllMoviesBtn() invoked:\nsender: \(sender)", "\ntappedIndexPath: \(tappedIndexPath)")
@@ -118,6 +126,28 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         Model.shared.requestDataForCharacterMovies(rowNumberFromTbl: tappedInt )
         performSegue(withIdentifier: "toAllMoviesCharacterSegue", sender: self)
     }
+    
+    func tableViewCellDidTapBDBtn(_ sender: CharacterTableViewCell) {
+        guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
+        let characterIndexTapped = tappedIndexPath.row
+        
+        // It took me quite a while to realize that I had to present the next view before i use NotificationCenter.default.post(), i understand now that the next viewcontroller must be initialized itself and the addObserver() that it could observe before post is sending to him
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyboard.instantiateViewController(withIdentifier: "PopUpVCID")
+        self.present(controller, animated: true, completion: nil)
+        
+        NotificationCenter.default.post(name: .characterBirthDay, object: nil, userInfo: ["rowNumber":characterIndexTapped])
+        
+        
+        
+    }
+    
+    
+    // if i had to deal with a lot of data i will load part of the data in viewDidload() and load more data when user scroll to the last cell that filled by viewDidLoad()
+    /*func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+    }*/
+    
     
 }
 
@@ -141,11 +171,15 @@ class CharacterTableViewCell: UITableViewCell {
         delegate?.tableViewCellDidTapAllMoviesBtn(self) // (sender: TableViewCellDelegate)
     }
     
+    @IBAction func birthDayBtn(_ sender: UIButton) {
+        delegate?.tableViewCellDidTapBDBtn(self)
+    }
+    
 }
 
 // MARK: NotificationCenter - extension to Notification.Name
 extension Notification.Name {
     static let characterBirthDay = Notification.Name("characterBirthDay")
-    static let allCharactersArrivedFromSwapiToModel = Notification.Name("allCharactersFromSwapiInModel")
+    static let reloadTbl = Notification.Name("reloadTbl")
     
 }

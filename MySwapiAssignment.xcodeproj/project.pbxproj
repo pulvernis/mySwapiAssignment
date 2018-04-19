@@ -10,8 +10,10 @@
 		09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */; };
 		09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */; };
 		09966F29207A723200E71D6F /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F28207A723200E71D6F /* TableViewCellDelegate.swift */; };
-		09966F2B207CC18700E71D6F /* MoviesLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F2A207CC18700E71D6F /* MoviesLabelView.swift */; };
-		09F27DA7206F88E3009B4A2C /* luke.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09F27DA6206F88E3009B4A2C /* luke.jpg */; };
+		09EE0F8920839ECD00BCBE3B /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */; };
+		09EE0F8B2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */; };
+		09EE0F8D2086445100BCBE3B /* no_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09EE0F8C2086445100BCBE3B /* no_image.jpg */; };
+		09EE0F8F2087178400BCBE3B /* star_wars.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09EE0F8E2087178400BCBE3B /* star_wars.jpg */; };
 		09F27DA92073ABC2009B4A2C /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F27DA82073ABC2009B4A2C /* Utility.swift */; };
 		09F3ED0C206E2FA700817941 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F3ED0B206E2FA700817941 /* AppDelegate.swift */; };
 		09F3ED11206E2FA700817941 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED0F206E2FA700817941 /* Main.storyboard */; };
@@ -26,8 +28,10 @@
 		09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterDetailsViewController.swift; sourceTree = "<group>"; };
 		09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterMoviesViewController.swift; sourceTree = "<group>"; };
 		09966F28207A723200E71D6F /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
-		09966F2A207CC18700E71D6F /* MoviesLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoviesLabelView.swift; sourceTree = "<group>"; };
-		09F27DA6206F88E3009B4A2C /* luke.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = luke.jpg; sourceTree = "<group>"; };
+		09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
+		09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuckDuckGoSearchImage.swift; sourceTree = "<group>"; };
+		09EE0F8C2086445100BCBE3B /* no_image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = no_image.jpg; sourceTree = "<group>"; };
+		09EE0F8E2087178400BCBE3B /* star_wars.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = star_wars.jpg; sourceTree = "<group>"; };
 		09F27DA82073ABC2009B4A2C /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		09F3ED08206E2FA700817941 /* MySwapiAssignment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySwapiAssignment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F3ED0B206E2FA700817941 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -78,14 +82,16 @@
 				09F3ED0B206E2FA700817941 /* AppDelegate.swift */,
 				09F3ED0F206E2FA700817941 /* Main.storyboard */,
 				09F3ED1D206E305100817941 /* TableViewController.swift */,
+				09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */,
 				09966F28207A723200E71D6F /* TableViewCellDelegate.swift */,
 				09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */,
 				09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */,
-				09966F2A207CC18700E71D6F /* MoviesLabelView.swift */,
+				09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */,
 				09F3ED1F206E3F5300817941 /* Model.swift */,
 				09F27DA82073ABC2009B4A2C /* Utility.swift */,
 				09F3ED12206E2FA700817941 /* Assets.xcassets */,
-				09F27DA6206F88E3009B4A2C /* luke.jpg */,
+				09EE0F8C2086445100BCBE3B /* no_image.jpg */,
+				09EE0F8E2087178400BCBE3B /* star_wars.jpg */,
 				09F3ED14206E2FA700817941 /* LaunchScreen.storyboard */,
 				09F3ED17206E2FA700817941 /* Info.plist */,
 			);
@@ -172,9 +178,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09F27DA7206F88E3009B4A2C /* luke.jpg in Resources */,
 				09F3ED16206E2FA700817941 /* LaunchScreen.storyboard in Resources */,
 				09F3ED13206E2FA700817941 /* Assets.xcassets in Resources */,
+				09EE0F8F2087178400BCBE3B /* star_wars.jpg in Resources */,
+				09EE0F8D2086445100BCBE3B /* no_image.jpg in Resources */,
 				09F3ED11206E2FA700817941 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -247,7 +254,8 @@
 				09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */,
 				09F3ED0C206E2FA700817941 /* AppDelegate.swift in Sources */,
 				09F3ED1E206E305100817941 /* TableViewController.swift in Sources */,
-				09966F2B207CC18700E71D6F /* MoviesLabelView.swift in Sources */,
+				09EE0F8B2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift in Sources */,
+				09EE0F8920839ECD00BCBE3B /* PopUpViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
