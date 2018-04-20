@@ -12,7 +12,8 @@
     2. Struct of Character - get append to property class (array of Characters called people)
     3. Using Alamofire:
         A. getAllPeopleInPageSwapiApi() - method with @escaping closure
-        B. getAllMoviesUrlsAndNamesFromApi()
+        B. getSwapiTypeFromUrlPage()
+ 
  
  
 */
@@ -20,7 +21,6 @@
 import UIKit
 
 // Make UITableViewController conform to the protocol
-
 class TableViewController: UITableViewController, TableViewCellDelegate {
     
     // singleton Model
@@ -29,14 +29,14 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        modelShared.getAllPeopleInPageSwapiApi (pageNumber: 1){
-            self.modelShared.getAllPeopleInPageSwapiApi(pageNumber: 2){
+        modelShared.getAllPeopleInPageSwapiApi (pageNumber: 1){ [unowned self] in
+            self.modelShared.getAllPeopleInPageSwapiApi(pageNumber: 2){ [unowned self] in
                 self.tableView.reloadData() // load 2 first pages
                 
                 //get 20 first images into cells
                 for character in self.modelShared.people {
                     let characterName = character.name
-                    DuckDuckGoSearchController.image(for: characterName) { result in
+                    DuckDuckGoSearchController.image(for: characterName) { [unowned self] result in
                         self.tableView.reloadData()
                     }
                     
@@ -66,10 +66,10 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         
     }
     
-    // Remove observer For when class is deallocate from memory
-    /*deinit {
+    // TODO: Remove observer For when class is deallocate from memory, do i really need that.. TVC is always live
+    deinit {
         NotificationCenter.default.removeObserver(self)
-    }*/
+    }
     
     // Mark: NotificationCenter - Method
     func reloadDataInTbl(notification: NSNotification) {
@@ -131,13 +131,12 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
         let characterIndexTapped = tappedIndexPath.row
         
-        // It took me quite a while to realize that I had to present the next view before i use NotificationCenter.default.post(), i understand now that the next viewcontroller must be initialized itself and the addObserver() that it could observe before post is sending to him
+        // first post to observer in Model, then move to PopUpVC
+        NotificationCenter.default.post(name: .characterBirthDay, object: nil, userInfo: ["rowNumber":characterIndexTapped])
+        
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "PopUpVCID")
         self.present(controller, animated: true, completion: nil)
-        
-        NotificationCenter.default.post(name: .characterBirthDay, object: nil, userInfo: ["rowNumber":characterIndexTapped])
-        
         
         
     }
@@ -168,7 +167,7 @@ class CharacterTableViewCell: UITableViewCell {
     @IBOutlet weak var allMoviesBtn: UIButton!
     
     @IBAction func allMoviesCharacterTappedBtn(_ sender: UIButton) {
-        delegate?.tableViewCellDidTapAllMoviesBtn(self) // (sender: TableViewCellDelegate)
+        delegate?.tableViewCellDidTapAllMoviesBtn(self) // (self -> CharacterTableViewCell)
     }
     
     @IBAction func birthDayBtn(_ sender: UIButton) {

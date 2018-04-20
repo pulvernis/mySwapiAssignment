@@ -9,6 +9,10 @@
 import UIKit
 import Alamofire
 
+// image() func use character name and encode it, then.. i'm use alamofire to get responseJson from api.duckduckgo.com
+// the responseJson send to imageSearchResult() func that get the image url by "image" key in the json, then.. i'm using alamofire request image url to get response contain image data.
+// every image data goes to Model into dict property (imageByCharacterNameDic) contain character name and UIImage respectively
+
 class DuckDuckGoSearchController {
     
     static let IMAGE_KEY = "Image"

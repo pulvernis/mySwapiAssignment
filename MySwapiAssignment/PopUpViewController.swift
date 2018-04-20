@@ -21,19 +21,24 @@ class PopUpViewController: UIViewController {
         
         popUpView.layer.cornerRadius = 10
         
-        NotificationCenter.default.addObserver(forName: .characterBirthDay, object: nil, queue: nil,
-                                               using: passingDataOfCellNumber)
+        //NotificationCenter.default.addObserver(forName: .characterBirthDay, object: nil, queue: nil,
+                                               //using: passingDataOfCellNumber)
+        if let index = Model.shared.popUpViewIndexCellTapped {
+            let character = Model.shared.people[index]
+            characterBirthYearLbl.text = character.birthYear
+        }
         
     }
     
-    // TODO: deinit doesn't execute when closePopUp() by dismiss() why?
+    // TODO: deinit doesn't execute when closePopUp() by dismiss() why? maybe retain cycle but where?
+    // continue: i moved NotificationCenter.default.addObserver to Model and now deallocate (deinit) works 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        //NotificationCenter.default.removeObserver(self)
         print("deinit called")
     }
     
-    func passingDataOfCellNumber(notification: Notification) -> Void {
-        // TODO: every click on BD Button it's like making more and more post (passingDataOfCellNumber() is execute one more time in eack click on BD button) even though i removeObserver every time i closePopUp() why?
+    /*func passingDataOfCellNumber(notification: Notification) -> Void {
+        // TODO: every click on BD Button it's like making more and more post (passingDataOfCellNumber() is execute one more time in each click on BD button) even though i removeObserver every time i closePopUp() why?
         let rowNumber = notification.userInfo!["rowNumber"] as? Int
         if let index = rowNumber {
             let character = Model.shared.people[index]
@@ -41,16 +46,14 @@ class PopUpViewController: UIViewController {
         }
         
         
-    }
+    }*/
 
     
     @IBAction func closePopUp(_ sender: UIButton) {
         
-        NotificationCenter.default.removeObserver(self)
-        
+        //NotificationCenter.default.removeObserver(self)
         dismiss(animated: true, completion: nil)
-        
-        
+    
     }
 
 }

@@ -36,46 +36,7 @@ class CharacterDetailsViewController: UIViewController {
             characterDetails[DetailType.VEHICLES.rawValue].text = getTextForLabel(detailType: .VEHICLES, character: character)
             
             characterDetails[DetailType.STARSHIPS.rawValue].text = getTextForLabel(detailType: .STARSHIPS, character: character)
-            
-            
-            
-            /*var textForVehiclesLabel = ""
-            
-            characterDetails[DetailType.VEHICLES.rawValue].sizeToFit()
-            if !character.vehiclesUrlArr.isEmpty {
-                if let vehicleStr = vehiclesNamesByUrlDict[character.vehiclesUrlArr[0]] {
-                    textForVehiclesLabel = vehicleStr
-                    
-                    for (index, vehicleUrl) in character.vehiclesUrlArr.enumerated() {
-                        if index>1 {
-                            if let anotherVehicle = vehiclesNamesByUrlDict[vehicleUrl] {
-                                textForVehiclesLabel += "\n\(anotherVehicle)"
-                            }
-                        }
-                    }
-                }
-                characterDetails[DetailType.VEHICLES.rawValue].text = textForVehiclesLabel
-            } else {
-                characterDetails[DetailType.VEHICLES.rawValue].text = "has no vehicles"
-            }
-            
-            characterDetails[DetailType.STARSHIPS.rawValue].sizeToFit()
-            if !character.starshipsUrlArr.isEmpty {
-                var textForLabel = starshipsNamesByUrlDict[character.starshipsUrlArr[0]]
-                for (index, starshipUrl) in character.starshipsUrlArr.enumerated(){
-                    if index>1 {
-                        textForLabel += "\n\(starshipsNamesByUrlDict[starshipUrl])"
-                    }
-                }
-                characterDetails[DetailType.STARSHIPS.rawValue].text = textForLabel
-            } else {
-                characterDetails[DetailType.STARSHIPS.rawValue].text = "has no starships"
-            }*/
-            
-            
         }
-        
-        
         
     }
     
@@ -103,14 +64,11 @@ class CharacterDetailsViewController: UIViewController {
                 }
             }
             return textForLabel
-        } /*else {
-            return "has no vehicles"
-        } */
+        }
         
         return "Without means"
     }
     
-
 }
 
 // Arranging enum DetailType:

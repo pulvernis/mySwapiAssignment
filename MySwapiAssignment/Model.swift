@@ -32,6 +32,8 @@ class Model {
     static let shared = Model()
     
     private init() {
+        NotificationCenter.default.addObserver(forName: .characterBirthDay, object: nil, queue: nil,
+                                               using: passingDataOfCellNumber)
     }
     
     // MARK: NotificationCenter - post on property observer didSet{} (people:[Character])
@@ -62,6 +64,18 @@ class Model {
                 
             }
         }
+    }
+    
+    var popUpViewIndexCellTapped: Int?
+    
+    func passingDataOfCellNumber(notification: Notification) -> Void {
+        // TODO: every click on BD Button it's like making more and more post (passingDataOfCellNumber() is execute one more time in each click on BD button) even though i removeObserver every time i closePopUp() why?
+        let rowNumber = notification.userInfo!["rowNumber"] as? Int
+        if let index = rowNumber {
+            popUpViewIndexCellTapped = index
+        }
+        
+        
     }
 
     var totalNumOfPeopleInSwapiApi: Int? { // initialize only once - when i catch the first page of people
