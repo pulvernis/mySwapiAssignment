@@ -11,8 +11,9 @@
     1. Class Using Singleton:
     2. Struct of Character - get append to property class (array of Characters called people)
     3. Using Alamofire:
-        A. getAllPeopleInPageSwapiApi() - method with @escaping closure
-        B. getSwapiTypeFromUrlPage()
+        A. getAllPeopleInPageSwapiApi() - method with @escaping closure for getting 10 characters separate in each escaping closure for loading to tbl
+        B. getSwapiTypeFromUrlPage() - get in the background one type with optional of getting all pages from this type (type can be vehicles, homeworlds, starships or movies but not people)
+  - TableViewController:
  
  
  
@@ -61,12 +62,15 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         
         
         // MARK: NotificationCenter - addObserver/ listener
-        
+        /* Observe to 2 post from model:
+            1. people:[Character] change and his count equal to totalNumOfPeopleInSwapiApi
+            2. imageByCharacterNameDict: [String: UIImage] change and equal to people.count so he notify that all images arrived
+         */
         NotificationCenter.default.addObserver(self, selector: #selector(reloadDataInTbl(notification:)), name: .reloadTbl, object: nil)
         
     }
     
-    // TODO: Remove observer For when class is deallocate from memory, do i really need that.. TVC is always live
+    // TODO: Remove observer when class is deallocate from memory, but TVC is always live?
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -77,8 +81,6 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         tableView.reloadData()
     }
 
-    // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -87,16 +89,12 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         return modelShared.people.count
     }
     
-    var lastCellClickedNum: Int = 0
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CharacterTableViewCell
         
         // MARK: Delegate-Style - Set the cell’s delegate to the controller itself.
         cell.delegate = self
-        
-        lastCellClickedNum = indexPath.row
         
         let characterInRow = Model.shared.people[indexPath.row]
         cell.titleLabelCharacterName.text = "\(characterInRow.name)"
@@ -121,9 +119,8 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
     // MARK: Delegate-Style - The cell call this protocol method when the user taps the allMovie button
     func tableViewCellDidTapAllMoviesBtn(_ sender: CharacterTableViewCell) {
         guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
-        print("*\nProtocol Method - tableViewCellDidTapAllMoviesBtn() invoked:\nsender: \(sender)", "\ntappedIndexPath: \(tappedIndexPath)")
         let tappedInt = tappedIndexPath.row
-        Model.shared.requestDataForCharacterMovies(rowNumberFromTbl: tappedInt )
+        modelShared.requestDataForCharacterMovies(rowNumberFromTbl: tappedInt )
         performSegue(withIdentifier: "toAllMoviesCharacterSegue", sender: self)
     }
     
@@ -131,22 +128,23 @@ class TableViewController: UITableViewController, TableViewCellDelegate {
         guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
         let characterIndexTapped = tappedIndexPath.row
         
-        // first post to observer in Model, then move to PopUpVC
+        // MARK: PopUp by BD btn - NotificationCenter - post when click on BD btn
+        // First.. post to observer in Model, then move to PopUpVC
         NotificationCenter.default.post(name: .characterBirthDay, object: nil, userInfo: ["rowNumber":characterIndexTapped])
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "PopUpVCID")
         self.present(controller, animated: true, completion: nil)
-        
-        
     }
     
-    
-    // if i had to deal with a lot of data i will load part of the data in viewDidload() and load more data when user scroll to the last cell that filled by viewDidLoad()
+    // If i had to deal with a lot of data i will load part of the data in viewDidload() and load more data every time user scroll to the last cell that filled
     /*func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-        
+            let lastElement = dataSource.count - 1
+            if indexPath.row == lastElement {
+                // handle your logic here to get more items, add it to dataSource and reload tableview
+            }
+     
     }*/
-    
     
 }
 

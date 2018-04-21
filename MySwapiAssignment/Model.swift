@@ -32,15 +32,15 @@ class Model {
     static let shared = Model()
     
     private init() {
+        // MARK: PopUp by BD btn - NotificationCenter - addObserver in Model init()
         NotificationCenter.default.addObserver(forName: .characterBirthDay, object: nil, queue: nil,
                                                using: passingDataOfCellNumber)
     }
     
-    // MARK: NotificationCenter - post on property observer didSet{} (people:[Character])
     private (set) var people:[Character] = [] {
         didSet {
             if people.count == totalNumOfPeopleInSwapiApi {
-                // notify to TableViewController that Model get all people/characters from swapi, TableViewController have an observer/listener and will reload data on tbl
+                // MARK: NotificationCenter - sending a signal that he get all people/characters
                 NotificationCenter.default.post(name: .reloadTbl, object: nil)
                 // start loading images to imageByCharacterNameDict
                 for character in people {
@@ -54,28 +54,26 @@ class Model {
         }
     }
     
-    // images load by DuckDuck..
+    // Images load by DuckDuck..
     var imageByCharacterNameDict: [String: UIImage] = [:] {
         didSet {
             if imageByCharacterNameDict.count == people.count {
-                
-            //notify to TableViewController that Model get all images from swapi
+                // MARK: NotificationCenter - sending a signal that he get all character images
                 NotificationCenter.default.post(name: .reloadTbl, object: nil)
                 
             }
         }
     }
     
+    // MARK: PopUp by BD btn - NotificationCenter - property get initialize by method of addObserver
     var popUpViewIndexCellTapped: Int?
     
+    // MARK: PopUp by BD btn - NotificationCenter - method invoked when addObserver receive a broadcast
     func passingDataOfCellNumber(notification: Notification) -> Void {
-        // TODO: every click on BD Button it's like making more and more post (passingDataOfCellNumber() is execute one more time in each click on BD button) even though i removeObserver every time i closePopUp() why?
         let rowNumber = notification.userInfo!["rowNumber"] as? Int
         if let index = rowNumber {
             popUpViewIndexCellTapped = index
         }
-        
-        
     }
 
     var totalNumOfPeopleInSwapiApi: Int? { // initialize only once - when i catch the first page of people
@@ -115,24 +113,21 @@ class Model {
     
     func getSwapiTypeFromUrlPage(swapiType: UrlSwapiType, fromPage: Int, getAllNextPages: Bool) {
         
-        // this inside func used after we ger result from swapi by alamofire
+        // This inside func used after we ger result from swapi by alamofire
         func getResultSwapiTypeUrlPage(tempNamesByUrlsDict: [String:String], swapiType: UrlSwapiType) {
             
             switch swapiType {
             case .VEHICLES:
-                // for each will iterate every key value from tempDict.
+                // forEach: will iterate every key value from tempDict.
                 // inside that closure we had all keys values to the other dict (vehiclesNameByUrl)
                 tempNamesByUrlsDict.forEach { self.vehiclesNamesByUrlsDict[$0] = $1 } // add dict to dict
-                //print("*\nvehiclesNamesByUrlsDict: \(vehiclesNamesByUrlsDict)")
             case .MOVIES:
                 tempNamesByUrlsDict.forEach { self.moviesNamesByUrlsDict[$0] = $1 }
                 print("*\nmoviesNamesByUrlsDict: \(moviesNamesByUrlsDict)")
             case .STAR_SHIPS:
                 tempNamesByUrlsDict.forEach { self.starshipsNamesByUrlsDict[$0] = $1 }
-                //print("*\nstarshipsNamesByUrlsDict: \(starshipsNamesByUrlsDict)")
             case .HOME_WORLD:
                 tempNamesByUrlsDict.forEach { self.homeworldNamesByUrlsDict[$0] = $1 }
-                //print("*\nhomeworldNamesByUrlsDict: \(homeworldNamesByUrlsDict)")
             }
         }
         
@@ -145,7 +140,7 @@ class Model {
             }
             
             if let jsonResult = response.result.value as? [String: Any] {
-                var tempNamesByUrlsDict: [String:String] = [:] // temp will get 10 urls/names per page
+                var tempNamesByUrlsDict: [String:String] = [:] // will assigned with 10 urls/names per page
                 
                 var name = "name"
                 if swapiType == .MOVIES { // movies/films in swapi have "title" instead of "name"
@@ -159,7 +154,6 @@ class Model {
                             tempNamesByUrlsDict[url] = name
                         }
                     }
-                    
                 }
                 
                 // invoke inside func (look up)
