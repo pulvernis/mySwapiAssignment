@@ -39,7 +39,7 @@ class CharacterDetailsViewController: UIViewController {
         }
         
     }
-    
+    // next method only for VEHICLES and STARSHIPS in DetailType
     func getTextForLabel(detailType: DetailType, character: Character) -> String {
         
          let typeUrlsArr = detailType.getUrlArr(character: character)
@@ -74,16 +74,8 @@ class CharacterDetailsViewController: UIViewController {
 // Arranging enum DetailType:
 // By the order of setting the details in storyboard in @IBOutlet var characterDetails: [UILabel]!
 enum DetailType: Int {
-    case GENDER
-    case BIRTH_YEAR
-    case HOME_WORLD
-    case EYE_COLOR
-    case HAIR_COLOR
-    case SKIN_COLOR
-    case HEIGHT
-    case MASS
-    case VEHICLES
-    case STARSHIPS
+    case GENDER, BIRTH_YEAR, HOME_WORLD, EYE_COLOR, HAIR_COLOR, SKIN_COLOR, HEIGHT, MASS
+    case VEHICLES, STARSHIPS
     
     func getUrlArr(character: Character) -> [String] {
         
