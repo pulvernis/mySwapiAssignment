@@ -5,18 +5,27 @@
 //  Created by Ran Pulvernis on 30/03/2018.
 //  Copyright © 2018 RanPulvernis. All rights reserved.
 
+/*
+ Model:
+ 1. Class Using Singleton:
+ 2. Struct of Character - get append to property class (array of Characters called people)
+ 3. Using Alamofire:
+ A. getAllPeopleInPageSwapiApi() - method that get 10 characters in each @escaping closure for loading to tbl
+ B. getSwapiTypeFromUrlPage() - get in the background one page of type with optional of getting all the next pages (type can be vehicles, homeworlds, starships or movies but not people)
+ */
+
 
 // Create Singleton: by Static Property and Private Initializer
 // Guarantees that only one instance of a class is instantiated. gives u global access and still using properties and methods of an object (not static)
-// The initializer of static properties are executed lazily by default - means that only when we use it first time it get initialized - the same happens in global variables
+// The initializer of static properties are executed lazily by default - means that only when we use it first time it get initialized (the same happens in global variables)
 
 // WHY NOT TO USE STATIC METHOD:
 // harder to test. If one static method calls another, it is difficult to override what happens in the second.
 
 // WHY SINGLETON:
-// 1.decide what happens when the instance is first accessed, via a private init()
-// 2.decide when this happens, namely when you first use it.
-// 3.much better (in terms of code readability) at keeping track of state.
+// 1. decide what happens when the instance is first accessed, via a private init()
+// 2. decide when this happens, namely when you first use it.
+// 3. much better (in terms of code readability) at keeping track of state.
 
 //  Static Methods benefit -  faster to call
 
@@ -37,19 +46,29 @@ class Model {
                                                using: passingDataOfCellNumber)
     }
     
+    var totalNumOfPeopleInSwapiApi: Int? { // initialize only once - when i get the first page of people
+        didSet {
+            if let totalNumOfPeople = totalNumOfPeopleInSwapiApi { // ambivalent to - if it's not nil
+                totalPagesOfPeopleInSwapiApi = totalNumOfPeople/10 + 1
+            }
+        }
+    }
+    
+    // initialize from didSet{} when totalNumOfPeopleInSwapiApi is changing
+    // Use for TVC
+    private (set) var totalPagesOfPeopleInSwapiApi: Int?
+    
     private (set) var people:[Character] = [] {
         didSet {
             if people.count == totalNumOfPeopleInSwapiApi {
                 // MARK: NotificationCenter - sending a signal that he get all people/characters
                 NotificationCenter.default.post(name: .reloadTbl, object: nil)
-                // start loading images to imageByCharacterNameDict
-                for character in people {
-                    let characterName = character.name
-                    DuckDuckGoSearchController.image(for: characterName) { result in
-    
-                    }
-                    
+                // Get the extra images: (20 already received)
+                for index in imageByCharacterNameDict.count..<people.count {
+                    let characterName = people[index].name
+                    DuckDuckGoSearchController.image(for: characterName) {_ in }
                 }
+                
             }
         }
     }
@@ -65,6 +84,9 @@ class Model {
         }
     }
     
+    // set by clicking on row in tbl - will used in CharacterDetailsViewController
+    var charcterRowTapped: Character?
+    
     // MARK: PopUp by BD btn - NotificationCenter - property get initialize by method of addObserver
     var popUpViewIndexCellTapped: Int?
     
@@ -76,30 +98,16 @@ class Model {
         }
     }
 
-    var totalNumOfPeopleInSwapiApi: Int? { // initialize only once - when i catch the first page of people
-        didSet {
-            if let totalNumOfPeople = totalNumOfPeopleInSwapiApi { // ambivalent to - if it's not nil
-                totalPagesOfPeopleInSwapiApi = totalNumOfPeople/10 + 1
-            }
-        }
-    }
-    
-    // initialize from didSet{} when totalNumOfPeopleInSwapiApi is changing
-    private (set) var totalPagesOfPeopleInSwapiApi: Int?
-    
     // because it's private (set) The only way to modify those properties is via the requestData() method
     private (set) var characterMovies: [String]?
     private (set) var characterName: String?
     
-    // set by clicking on row in tbl - will used in CharacterDetailsViewController
-    var charcterRowTapped: Character?
-    
-    //Once we receive data in requestData, we save it in a local variable
+    //Once we receive data in requestData, we save it in a local variable (TapAllMoviesBtn in TVC)
     func requestDataForCharacterMovies(rowNumberFromTbl: Int) {
         
         let character = people[rowNumberFromTbl]
         let moviesUrlArr = character.moviesUrlArr
-        var moviesStrArr:[String] = [] // does it matter if i do - var moviesStrArr = [String]()
+        var moviesStrArr:[String] = []
         for movieUrl in moviesUrlArr {
             if let movieStr = moviesNamesByUrlsDict[movieUrl] {
                 moviesStrArr.append(movieStr)
@@ -108,7 +116,6 @@ class Model {
         
         self.characterMovies = moviesStrArr
         self.characterName = character.name
-        
     }
     
     func getSwapiTypeFromUrlPage(swapiType: UrlSwapiType, fromPage: Int, getAllNextPages: Bool) {
@@ -123,7 +130,6 @@ class Model {
                 tempNamesByUrlsDict.forEach { self.vehiclesNamesByUrlsDict[$0] = $1 } // add dict to dict
             case .MOVIES:
                 tempNamesByUrlsDict.forEach { self.moviesNamesByUrlsDict[$0] = $1 }
-                print("*\nmoviesNamesByUrlsDict: \(moviesNamesByUrlsDict)")
             case .STAR_SHIPS:
                 tempNamesByUrlsDict.forEach { self.starshipsNamesByUrlsDict[$0] = $1 }
             case .HOME_WORLD:

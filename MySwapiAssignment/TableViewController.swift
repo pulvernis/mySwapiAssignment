@@ -6,22 +6,9 @@
 //  Copyright © 2018 RanPulvernis. All rights reserved.
 //
 
-/* about this project:
-    - Model:
-    1. Class Using Singleton:
-    2. Struct of Character - get append to property class (array of Characters called people)
-    3. Using Alamofire:
-        A. getAllPeopleInPageSwapiApi() - method with @escaping closure for getting 10 characters separate in each escaping closure for loading to tbl
-        B. getSwapiTypeFromUrlPage() - get in the background one type with optional of getting all pages from this type (type can be vehicles, homeworlds, starships or movies but not people)
-  - TableViewController:
- 
- 
- 
-*/
-
 import UIKit
 
-// Make UITableViewController conform to the protocol
+// MARK: Delegate - Style - Make UITableViewController conform to the protocol
 class TableViewController: UITableViewController, TableViewCellDelegate {
     
     // singleton Model
