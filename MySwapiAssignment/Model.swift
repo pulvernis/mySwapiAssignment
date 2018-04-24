@@ -251,6 +251,7 @@ class Model {
             }
             
             // In here (Alamofire.request - response) - after getting and load all characters  into people: [Character] we add completion that will 'escape' from here and load it in tbl in TableViewController
+            // If a closure is passed as an argument to a function and it is invoked after the function returns, the closure is escaping
             completion()
         }
     }

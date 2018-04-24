@@ -10,6 +10,7 @@
 		09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */; };
 		09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */; };
 		09966F29207A723200E71D6F /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F28207A723200E71D6F /* TableViewCellDelegate.swift */; };
+		09E114A9208F06AF00F341AE /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E114A8208F06AF00F341AE /* HomeViewController.swift */; };
 		09EE0F8920839ECD00BCBE3B /* PopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */; };
 		09EE0F8B2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */; };
 		09EE0F8D2086445100BCBE3B /* no_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09EE0F8C2086445100BCBE3B /* no_image.jpg */; };
@@ -19,7 +20,6 @@
 		09F3ED11206E2FA700817941 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED0F206E2FA700817941 /* Main.storyboard */; };
 		09F3ED13206E2FA700817941 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED12206E2FA700817941 /* Assets.xcassets */; };
 		09F3ED16206E2FA700817941 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED14206E2FA700817941 /* LaunchScreen.storyboard */; };
-		09F3ED1E206E305100817941 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F3ED1D206E305100817941 /* TableViewController.swift */; };
 		09F3ED20206E3F5300817941 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F3ED1F206E3F5300817941 /* Model.swift */; };
 		921BA6E4652A3DFBD819276B /* Pods_MySwapiAssignment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3278A70A35630CCAD07D37BA /* Pods_MySwapiAssignment.framework */; };
 /* End PBXBuildFile section */
@@ -28,6 +28,7 @@
 		09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterDetailsViewController.swift; sourceTree = "<group>"; };
 		09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterMoviesViewController.swift; sourceTree = "<group>"; };
 		09966F28207A723200E71D6F /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
+		09E114A8208F06AF00F341AE /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PopUpViewController.swift; sourceTree = "<group>"; };
 		09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuckDuckGoSearchImage.swift; sourceTree = "<group>"; };
 		09EE0F8C2086445100BCBE3B /* no_image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = no_image.jpg; sourceTree = "<group>"; };
@@ -39,7 +40,6 @@
 		09F3ED12206E2FA700817941 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		09F3ED15206E2FA700817941 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		09F3ED17206E2FA700817941 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09F3ED1D206E305100817941 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		09F3ED1F206E3F5300817941 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		3278A70A35630CCAD07D37BA /* Pods_MySwapiAssignment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MySwapiAssignment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75B8031157105B21C827FE70 /* Pods-MySwapiAssignment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MySwapiAssignment.release.xcconfig"; path = "Pods/Target Support Files/Pods-MySwapiAssignment/Pods-MySwapiAssignment.release.xcconfig"; sourceTree = "<group>"; };
@@ -81,7 +81,7 @@
 			children = (
 				09F3ED0B206E2FA700817941 /* AppDelegate.swift */,
 				09F3ED0F206E2FA700817941 /* Main.storyboard */,
-				09F3ED1D206E305100817941 /* TableViewController.swift */,
+				09E114A8208F06AF00F341AE /* HomeViewController.swift */,
 				09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */,
 				09966F28207A723200E71D6F /* TableViewCellDelegate.swift */,
 				09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */,
@@ -252,8 +252,8 @@
 				09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */,
 				09EE0F91208893EA00BCBE3B /* PassDataExplanation.swift in Sources */,
 				09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */,
+				09E114A9208F06AF00F341AE /* HomeViewController.swift in Sources */,
 				09F3ED0C206E2FA700817941 /* AppDelegate.swift in Sources */,
-				09F3ED1E206E305100817941 /* TableViewController.swift in Sources */,
 				09EE0F8B2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift in Sources */,
 				09EE0F8920839ECD00BCBE3B /* PopUpViewController.swift in Sources */,
 			);

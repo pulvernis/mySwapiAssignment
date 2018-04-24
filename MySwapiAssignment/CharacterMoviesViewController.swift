@@ -26,7 +26,7 @@ class CharacterMoviesViewController: UIViewController {
         if let characterMovies = Model.shared.characterMovies {
             let orient = UIApplication.shared.statusBarOrientation
             switch orient {
-                // In this two cases i use first option: func in func (and not func with the closure), not for a particular reason, just for showing that both option work fine (second option with closure use after rotation by using override func viewWillTransition() )
+                // In this two cases i use first option: func in func (and not func with closure), not for a particular reason, just for showing that both option work fine (second option with closure use after rotation by using override func viewWillTransition() )
             case .portrait:
                 self.createLabels(characterMovies: characterMovies, mode: .PORTRAIT)
                 
@@ -123,8 +123,8 @@ class CharacterMoviesViewController: UIViewController {
         case LANDSCAPE
     }
     
-    // 2. func with escaping closure as an argument that after is outside action he is return CGRect and assigned here to rect property for continuing in making movie label
-    func createLabelsWithClosure(characterMovies: [String], lblPointSizeClosure: @escaping () -> (CGRect)) {
+    // 2. func with closure as an argument that after is outside action he is return CGRect and assigned here to rect property for continuing in making movie label
+    func createLabelsWithClosure(characterMovies: [String], lblPointSizeClosure: () -> (CGRect)) {
         
         for movieName in characterMovies{
             let rect = lblPointSizeClosure()
@@ -137,10 +137,6 @@ class CharacterMoviesViewController: UIViewController {
             
             self.view.addSubview(label)
         }
-        
-        
-        
-        
     }
 
 }

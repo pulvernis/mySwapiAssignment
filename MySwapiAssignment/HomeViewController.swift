@@ -1,31 +1,42 @@
 //
-//  TableViewController.swift
+//  HomeViewController.swift
 //  MySwapiAssignment
 //
-//  Created by Ran Pulvernis on 30/03/2018.
+//  Created by Ran Pulvernis on 24/04/2018.
 //  Copyright © 2018 RanPulvernis. All rights reserved.
 //
 
 import UIKit
 
-// MARK: Delegate - Style - Make UITableViewController conform to the protocol
-/*class TableViewController: UITableViewController, TableViewCellDelegate {
-    
-    // singleton Model
-    let modelShared = Model.shared
+class HomeViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TableViewCellDelegate {
 
+    @IBOutlet weak var indicator: UIActivityIndicatorView!
+    @IBOutlet weak var imageView: UIImageView!
+    // singleton Model
+    @IBOutlet weak var tableview: UITableView!
+    let modelShared = Model.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        indicator.transform = CGAffineTransform(scaleX: 3, y: 3)
+        
         modelShared.getAllPeopleInPageSwapiApi (pageNumber: 1){ [unowned self] in
             self.modelShared.getAllPeopleInPageSwapiApi(pageNumber: 2){ [unowned self] in
-                self.tableView.reloadData() // load 2 first pages
+                self.tableview.reloadData() // load 2 first pages
                 
                 //get 20 first images into cells
                 for character in self.modelShared.people {
                     let characterName = character.name
                     DuckDuckGoSearchController.image(for: characterName) { [unowned self] result in
-                        self.tableView.reloadData()
+                        self.tableview.reloadData()
+                        self.indicator.stopAnimating()
+                        
+                        UIView.animate(withDuration: 1, animations: {
+                            self.imageView.alpha = 0
+                            self.tableview.alpha = 1.0
+                            
+                        })
                     }
                     
                 }
@@ -41,7 +52,7 @@ import UIKit
             }
         }
         
-        // TODO: maybe it will be better to load data api to Model when user click first time on cell/All Movies button, because doing too much work on background here (in viewDidLoad)
+        // TODO: maybe it will be better to load data api to Model when user click first time on cell/All Movies button, because now it's doing alot of work in the background here (in viewDidLoad)
         modelShared.getSwapiTypeFromUrlPage(swapiType: .VEHICLES, fromPage: 1, getAllNextPages: true)
         modelShared.getSwapiTypeFromUrlPage(swapiType: .HOME_WORLD, fromPage: 1, getAllNextPages: true)
         modelShared.getSwapiTypeFromUrlPage(swapiType: .MOVIES, fromPage: 1, getAllNextPages: true)
@@ -50,8 +61,8 @@ import UIKit
         
         // MARK: NotificationCenter - addObserver/ listener
         /* Observe to 2 post from model:
-            1. people:[Character] change and his count equal to totalNumOfPeopleInSwapiApi
-            2. imageByCharacterNameDict: [String: UIImage] change and equal to people.count so he notify that all images arrived
+         1. people:[Character] change and his count equal to totalNumOfPeopleInSwapiApi
+         2. imageByCharacterNameDict: [String: UIImage] change and equal to people.count so he notify that all images arrived
          */
         NotificationCenter.default.addObserver(self, selector: #selector(reloadDataInTbl(notification:)), name: .reloadTbl, object: nil)
         
@@ -65,18 +76,18 @@ import UIKit
     // Mark: NotificationCenter - Method
     func reloadDataInTbl(notification: NSNotification) {
         print("notified tbl")
-        tableView.reloadData()
+        tableview.reloadData()
     }
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return modelShared.people.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CharacterTableViewCell
         
@@ -99,26 +110,27 @@ import UIKit
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         modelShared.charcterRowTapped = modelShared.people[indexPath.row]
     }
     
     // MARK: Delegate-Style - The cell call this protocol method when the user taps the allMovie button
     func tableViewCellDidTapAllMoviesBtn(_ sender: CharacterTableViewCell) {
-        guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
+        guard let tappedIndexPath = tableview.indexPath(for: sender) else{ return }
         let tappedInt = tappedIndexPath.row
         modelShared.requestDataForCharacterMovies(rowNumberFromTbl: tappedInt )
-        performSegue(withIdentifier: "toAllMoviesCharacterSegue", sender: self)
+        // performSegue is optional too - but in storyboard - instead of stretching segue line from the button, stretch it from the viewcontroller itself.. then add this extra line below 
+        //performSegue(withIdentifier: "toAllMoviesCharacterSegue", sender: self)
     }
     
     func tableViewCellDidTapBDBtn(_ sender: CharacterTableViewCell) {
-        guard let tappedIndexPath = tableView.indexPath(for: sender) else { return }
+        guard let tappedIndexPath = tableview.indexPath(for: sender) else{ return }
         let characterIndexTapped = tappedIndexPath.row
         
         // MARK: PopUp by BD btn - NotificationCenter - post when click on BD btn
         // First.. post to observer in Model, then move to PopUpVC
         NotificationCenter.default.post(name: .characterBirthDay, object: nil, userInfo: ["rowNumber":characterIndexTapped])
-        
+        // MARK: Instantiate PopUpViewController
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "PopUpVCID")
         self.present(controller, animated: true, completion: nil)
@@ -126,20 +138,20 @@ import UIKit
     
     // If i had to deal with a lot of data i will load part of the data in viewDidload() and load more data every time user scroll to the last cell that filled
     /*func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
-            let lastElement = dataSource.count - 1
-            if indexPath.row == lastElement {
-                // handle your logic here to get more items, add it to dataSource and reload tableview
-            }
+     let lastElement = modelShared.people.count - 1
+     if indexPath.row == lastElement {
+     // handle your logic here to get more items, add it to dataSource and reload tableview
+     }
      
-    }*/
+     }*/
     
 }
 
 class CharacterTableViewCell: UITableViewCell {
     
-// MARK: Delegate-Style - property
-// Add delegate property to custom cell class. Make it weak and optional. 
-// Then, wire up the button action to method within the cell to call these delegate method
+    // MARK: Delegate-Style - property
+    // Add delegate property to custom cell class. Make it weak and optional.
+    // Then, wire up the button action to method within the cell to call these delegate method
     
     weak var delegate:TableViewCellDelegate?
     
@@ -166,4 +178,10 @@ extension Notification.Name {
     static let characterBirthDay = Notification.Name("characterBirthDay")
     static let reloadTbl = Notification.Name("reloadTbl")
     
-}*/
+}
+
+func setView(view: UIView, hidden: Bool) {
+    UIView.transition(with: view, duration: 2, options: .transitionCrossDissolve, animations: {
+        view.isHidden = hidden
+    })
+}
