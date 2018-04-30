@@ -59,22 +59,22 @@ class CharacterMoviesViewController: UIViewController {
                     
                 case .portrait:
                     // Two ways of using closure when he is the last argument: in portrait i use it implicitly and in landscape explicitly
-                    //self.createLabels(characterMovies: characterMovies, mode: .PORTRAIT)
-                    self.createLabelsWithClosure(characterMovies: characterMovies) {
+                    self.createLabels(characterMovies: characterMovies, mode: .PORTRAIT)
+                    /*self.createLabelsWithClosure(characterMovies: characterMovies) { [unowned self] in
                         let point = CGPoint(x: self.cgSize!.width*0.22, y: self.cgSize!.height*self.height )
                         let size = CGSize(width: self.cgSize!.width*0.56, height: self.cgSize!.height*0.05)
                         self.height += 0.065
                         return CGRect(origin: point, size: size)
-                    }
+                    }*/
                     
                 case .landscapeLeft,.landscapeRight :
-                    //self.createLabels(characterMovies: characterMovies, mode: .LANDSCAPE)
-                    self.createLabelsWithClosure(characterMovies: characterMovies, lblPointSizeClosure: { () -> (CGRect) in
+                    self.createLabels(characterMovies: characterMovies, mode: .LANDSCAPE)
+                    /*self.createLabelsWithClosure(characterMovies: characterMovies, lblPointSizeClosure: { [unowned self] () -> (CGRect) in
                         let point = CGPoint(x: self.cgSize!.width*0.3, y: self.cgSize!.height*self.height )
                         let size = CGSize(width: self.cgSize!.width*0.4, height: self.cgSize!.height*0.065)
                         self.height += 0.08
                         return CGRect(origin: point, size: size)
-                    })
+                    })*/
                     
                 default:
                     print("portraitUpsideDown")
