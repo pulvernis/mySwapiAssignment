@@ -11,15 +11,12 @@ import UIKit
 class CharacterDetailsViewController: UIViewController {
 
     @IBOutlet weak var characterNameLabel: UILabel!
-    
     @IBOutlet var characterDetails: [UILabel]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let sharedInstance = Model.shared
-        
-        let characterFromRowTapped = sharedInstance.charcterRowTapped
+        let characterFromRowTapped = modelShared.charcterRowTapped
         
         if let character = characterFromRowTapped {
             characterNameLabel.text = character.name
@@ -92,9 +89,9 @@ enum DetailType: Int {
     func getNameByUrl() -> [String:String] {
         switch self {
         case .VEHICLES:
-            return Model.shared.vehiclesNamesByUrlsDict
+            return modelShared.vehiclesNamesByUrlsDict
         case .STARSHIPS:
-            return Model.shared.starshipsNamesByUrlsDict
+            return modelShared.starshipsNamesByUrlsDict
         default:
             return [:]
         }

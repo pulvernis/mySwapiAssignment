@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09555C1B20924B490007FA6D /* SwapiSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C1A20924B490007FA6D /* SwapiSearch.swift */; };
+		09555C202092567E0007FA6D /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C1F2092567E0007FA6D /* NotificationKeys.swift */; };
+		09555C222092573A0007FA6D /* CharacterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C212092573A0007FA6D /* CharacterTableViewCell.swift */; };
 		09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */; };
 		09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */; };
 		09966F29207A723200E71D6F /* TableViewCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F28207A723200E71D6F /* TableViewCellDelegate.swift */; };
@@ -20,11 +23,14 @@
 		09F3ED11206E2FA700817941 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED0F206E2FA700817941 /* Main.storyboard */; };
 		09F3ED13206E2FA700817941 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED12206E2FA700817941 /* Assets.xcassets */; };
 		09F3ED16206E2FA700817941 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED14206E2FA700817941 /* LaunchScreen.storyboard */; };
-		09F3ED20206E3F5300817941 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F3ED1F206E3F5300817941 /* Model.swift */; };
+		09F3ED20206E3F5300817941 /* ModelShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F3ED1F206E3F5300817941 /* ModelShared.swift */; };
 		921BA6E4652A3DFBD819276B /* Pods_MySwapiAssignment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3278A70A35630CCAD07D37BA /* Pods_MySwapiAssignment.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		09555C1A20924B490007FA6D /* SwapiSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapiSearch.swift; sourceTree = "<group>"; };
+		09555C1F2092567E0007FA6D /* NotificationKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
+		09555C212092573A0007FA6D /* CharacterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterTableViewCell.swift; sourceTree = "<group>"; };
 		09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterDetailsViewController.swift; sourceTree = "<group>"; };
 		09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterMoviesViewController.swift; sourceTree = "<group>"; };
 		09966F28207A723200E71D6F /* TableViewCellDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewCellDelegate.swift; sourceTree = "<group>"; };
@@ -40,7 +46,7 @@
 		09F3ED12206E2FA700817941 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		09F3ED15206E2FA700817941 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		09F3ED17206E2FA700817941 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09F3ED1F206E3F5300817941 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		09F3ED1F206E3F5300817941 /* ModelShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModelShared.swift; sourceTree = "<group>"; };
 		3278A70A35630CCAD07D37BA /* Pods_MySwapiAssignment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MySwapiAssignment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75B8031157105B21C827FE70 /* Pods-MySwapiAssignment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MySwapiAssignment.release.xcconfig"; path = "Pods/Target Support Files/Pods-MySwapiAssignment/Pods-MySwapiAssignment.release.xcconfig"; sourceTree = "<group>"; };
 		9DB9478AFB515980910477C1 /* Pods-MySwapiAssignment.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MySwapiAssignment.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MySwapiAssignment/Pods-MySwapiAssignment.debug.xcconfig"; sourceTree = "<group>"; };
@@ -58,6 +64,64 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		09555C1D209255130007FA6D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */,
+				09F3ED1F206E3F5300817941 /* ModelShared.swift */,
+				09555C1A20924B490007FA6D /* SwapiSearch.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		09555C1E209255490007FA6D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				09E114A8208F06AF00F341AE /* HomeViewController.swift */,
+				09966F28207A723200E71D6F /* TableViewCellDelegate.swift */,
+				09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */,
+				09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */,
+				09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		09555C23209257760007FA6D /* View */ = {
+			isa = PBXGroup;
+			children = (
+				09555C212092573A0007FA6D /* CharacterTableViewCell.swift */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		09555C242092592E0007FA6D /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				09555C252092595E0007FA6D /* Images */,
+				09555C1F2092567E0007FA6D /* NotificationKeys.swift */,
+				09EE0F90208893EA00BCBE3B /* PassDataExplanation.swift */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
+		09555C252092595E0007FA6D /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				09EE0F8C2086445100BCBE3B /* no_image.jpg */,
+				09EE0F8E2087178400BCBE3B /* star_wars.jpg */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		09555C2620971A830007FA6D /* Supproting Files */ = {
+			isa = PBXGroup;
+			children = (
+				09F3ED0B206E2FA700817941 /* AppDelegate.swift */,
+				09F3ED14206E2FA700817941 /* LaunchScreen.storyboard */,
+			);
+			name = "Supproting Files";
+			sourceTree = "<group>";
+		};
 		09F3ECFF206E2FA700817941 = {
 			isa = PBXGroup;
 			children = (
@@ -79,20 +143,13 @@
 		09F3ED0A206E2FA700817941 /* MySwapiAssignment */ = {
 			isa = PBXGroup;
 			children = (
-				09F3ED0B206E2FA700817941 /* AppDelegate.swift */,
+				09555C2620971A830007FA6D /* Supproting Files */,
 				09F3ED0F206E2FA700817941 /* Main.storyboard */,
-				09E114A8208F06AF00F341AE /* HomeViewController.swift */,
-				09EE0F8820839ECD00BCBE3B /* PopUpViewController.swift */,
-				09966F28207A723200E71D6F /* TableViewCellDelegate.swift */,
-				09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */,
-				09966F24207A0B1600E71D6F /* CharacterMoviesViewController.swift */,
-				09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */,
-				09F3ED1F206E3F5300817941 /* Model.swift */,
-				09EE0F90208893EA00BCBE3B /* PassDataExplanation.swift */,
+				09555C1D209255130007FA6D /* Model */,
+				09555C23209257760007FA6D /* View */,
+				09555C1E209255490007FA6D /* Controller */,
+				09555C242092592E0007FA6D /* Utility */,
 				09F3ED12206E2FA700817941 /* Assets.xcassets */,
-				09EE0F8C2086445100BCBE3B /* no_image.jpg */,
-				09EE0F8E2087178400BCBE3B /* star_wars.jpg */,
-				09F3ED14206E2FA700817941 /* LaunchScreen.storyboard */,
 				09F3ED17206E2FA700817941 /* Info.plist */,
 			);
 			path = MySwapiAssignment;
@@ -247,8 +304,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09F3ED20206E3F5300817941 /* Model.swift in Sources */,
+				09F3ED20206E3F5300817941 /* ModelShared.swift in Sources */,
 				09966F29207A723200E71D6F /* TableViewCellDelegate.swift in Sources */,
+				09555C1B20924B490007FA6D /* SwapiSearch.swift in Sources */,
+				09555C202092567E0007FA6D /* NotificationKeys.swift in Sources */,
 				09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */,
 				09EE0F91208893EA00BCBE3B /* PassDataExplanation.swift in Sources */,
 				09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */,
@@ -256,6 +315,7 @@
 				09F3ED0C206E2FA700817941 /* AppDelegate.swift in Sources */,
 				09EE0F8B2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift in Sources */,
 				09EE0F8920839ECD00BCBE3B /* PopUpViewController.swift in Sources */,
+				09555C222092573A0007FA6D /* CharacterTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

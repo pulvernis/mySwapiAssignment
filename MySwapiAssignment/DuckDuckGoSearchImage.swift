@@ -10,14 +10,15 @@ import UIKit
 import Alamofire
 
 // image() func use character name and encode it, then.. i'm use alamofire to get responseJson from api.duckduckgo.com
-// the responseJson send to imageSearchResult() func that get the image url by "image" key in the json, then.. i'm using alamofire request image url to get response contain image data.
+// i'm transfering the responseJson to [string:Any] dictionary and taking out the Image Url as String
+// i'm  sending it to imageSearchResult() func that use alamofire to request the real image data by this Image Url String by using response (and NOT responseJson)
 // every image data goes to Model into dict property (imageByCharacterNameDic) contain character name and UIImage respectively
 
-class DuckDuckGoSearchController {
+class DuckDuckGoSearchImage {
     
     static let IMAGE_KEY = "Image"
     
-    static func image(for name: String, completionHandler: @escaping (Data) -> Void) {
+    static func image(for name: String, completionHandler: @escaping (Data?) -> Void) {
         let searchString = name//"Luke Skywalker"
         // Get the search URL
         guard let searchURLString = endpoint(for: searchString) else {
@@ -25,16 +26,30 @@ class DuckDuckGoSearchController {
         }
         // Call the search URL
         Alamofire.request(searchURLString).responseJSON { response in
-                if response.result.error != nil {
-                    print("error: \(response.result.error?.localizedDescription)")
-                    return
-                }
-                // Get the image
-                DuckDuckGoSearchController.imageSearchResult(from: response) { imageDataResult in
-                    // return the image
-                    Model.shared.imageByCharacterNameDict[name] = UIImage(data: imageDataResult)
-                    completionHandler(imageDataResult)
-                }
+            
+            if response.result.error != nil {
+                
+                print("*\n\"DuckDuck..\nerror in - \(searchURLString)\n error is: \(response.result.error!.localizedDescription)")
+                return
+            }
+            
+            // make sure we got JSON and it's a dictionary
+            guard let json = response.result.value as? [String: Any] else {
+                print("didn't get image search result as JSON from API")
+                return
+            }
+            //make sure we got Image Url and it's a string
+            guard let imageURL = json[IMAGE_KEY] as? String else {
+                print("didn't get URL for image from search results")
+                return
+            }
+            
+            // Get the image by Image Url
+            DuckDuckGoSearchImage.imageSearchResult(from: imageURL) { imageDataResult in
+                // return the image
+                modelShared.imageByCharacterNameDict[name] = imageDataResult
+                completionHandler(imageDataResult)
+            }
         }
     }
     
@@ -49,32 +64,15 @@ class DuckDuckGoSearchController {
         // e.g: https://api.duckduckgo.com/?q=Yoda%20star%20wars&format=json&t=grokswift
     }
     
-    private static func imageSearchResult(from response: DataResponse<Any>, completionHandler: @escaping (Data) -> Void) {
-        guard response.result.error == nil else {
-            // got an error in getting the data, need to handle it
-            print(response.result.error!)
-            return
-        }
-        
-        // make sure we got JSON and it's a dictionary
-        guard let json = response.result.value as? [String: Any] else {
-            print("didn't get image search result as JSON from API")
-            return
-        }
-        
-        guard let imageURL = json[IMAGE_KEY] as? String else {
-            print("didn't get URL for image from search results")
-            return
-        }
-        
+    private static func imageSearchResult(from imageUrl: String, completionHandler: @escaping (Data?) -> Void) {
         // get the image:
         // To get the actual data in the response instead of JSON, we hook up .response as a response handler instead of .responseJSON.
-        Alamofire.request(imageURL).response { response in
-                guard let imageData = response.data else {
-                    print("Could not get image from image URL returned in search results")
-                    
+        Alamofire.request(imageUrl).response { response in
+                /*guard let imageData = response.data else {
+                    print("Could not get character image by imageUrl: \(imageUrl)")
                     return
-                }
+                }*/
+            let imageData = response.data
             
             completionHandler(imageData)
         }

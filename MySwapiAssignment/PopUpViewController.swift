@@ -23,8 +23,8 @@ class PopUpViewController: UIViewController {
         
         //NotificationCenter.default.addObserver(forName: .characterBirthDay, object: nil, queue: nil,
                                                //using: passingDataOfCellNumber)
-        if let index = Model.shared.popUpViewIndexCellTapped {
-            let character = Model.shared.people[index]
+        if let index = modelShared.popUpViewIndexCellTapped {
+            let character = modelShared.people[index]
             characterBirthYearLbl.text = character.birthYear
         }
         

@@ -18,15 +18,15 @@ class CharacterMoviesViewController: UIViewController {
         
         cgSize = view.bounds.size
         
-        if let characterName = Model.shared.characterName {
+        if let characterName = modelShared.characterName {
             let headLine = "\(characterName) Movies"
             navigationItem.title = headLine
         }
         
-        if let characterMovies = Model.shared.characterMovies {
+        if let characterMovies = modelShared.characterMovies {
             let orient = UIApplication.shared.statusBarOrientation
             switch orient {
-                // In this two cases i use first option: func in func (and not func with closure), not for a particular reason, just for showing that both option work fine (second option with closure use after rotation by using override func viewWillTransition() )
+                // In this two cases i use first option: func in func (and not func with closure), not for a particular reason, just for showing that both option works fine (second option with closure use after rotation by using override func viewWillTransition() )
             case .portrait:
                 self.createLabels(characterMovies: characterMovies, mode: .PORTRAIT)
                 
@@ -53,7 +53,7 @@ class CharacterMoviesViewController: UIViewController {
             
             self.cgSize = self.view.bounds.size //update cgSize to the new size
             
-            if let characterMovies = Model.shared.characterMovies {
+            if let characterMovies = modelShared.characterMovies {
                 
                 switch orient {
                     
@@ -123,7 +123,7 @@ class CharacterMoviesViewController: UIViewController {
         case LANDSCAPE
     }
     
-    // 2. func with closure as an argument that after is outside action he is return CGRect and assigned here to rect property for continuing in making movie label
+    // 2. func with closure as an argument, the closure return CGRect and assigned here in rect property for continuing in making movie label
     func createLabelsWithClosure(characterMovies: [String], lblPointSizeClosure: () -> (CGRect)) {
         
         for movieName in characterMovies{
