@@ -14,11 +14,13 @@ import Alamofire
 // i'm  sending it to imageSearchResult() func that use alamofire to request the real image data by this Image Url String by using response (and NOT responseJson)
 // every image data goes to Model into dict property (imageByCharacterNameDic) contain character name and UIImage respectively
 
-class DuckDuckGoSearchImage {
+struct DuckDuckGoSearchImage {
     
     static let IMAGE_KEY = "Image"
+    static var trySearchAgainOnNameIfError:[String] = []
     
     static func image(for name: String, completionHandler: @escaping (Data?) -> Void) {
+        //trySearchAgainOnName.append(name)
         let searchString = name//"Luke Skywalker"
         // Get the search URL
         guard let searchURLString = endpoint(for: searchString) else {
@@ -28,6 +30,14 @@ class DuckDuckGoSearchImage {
         Alamofire.request(searchURLString).responseJSON { response in
             
             if response.result.error != nil {
+                // TODO: try again but only once:
+                for (index, nameInSearch) in trySearchAgainOnNameIfError.enumerated() {
+                    if name == nameInSearch {
+                        image(for: name) {_ in}
+                        trySearchAgainOnNameIfError.remove(at: index)
+                        print("try again to search image: \(name)")
+                    }
+                }
                 
                 print("*\n\"DuckDuck..\nerror in - \(searchURLString)\n error is: \(response.result.error!.localizedDescription)")
                 return

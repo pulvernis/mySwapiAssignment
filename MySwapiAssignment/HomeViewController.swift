@@ -21,62 +21,29 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         
         indicator.transform = CGAffineTransform(scaleX: 3, y: 3)
         
-        SwapiSearch.getAllPeopleInPageSwapiApi (fromPage: 1, getAllNextPages: false){ 
-            SwapiSearch.getAllPeopleInPageSwapiApi(fromPage: 2, getAllNextPages: false){
-                modelShared.firstLoadingPeopleAmount = modelShared.people.count // 2 pages = 20 characters
-                
-                // Two Ways of getting rest characters:
-                // 1. more efficient way - iterate the number of pages and make call api (but assume 10 characters in each page)
-                if let totalPagesPeople =  modelShared.totalPagesOfPeopleInSwapiApi{
-                    var countToEndOfPages = 3
-                    while countToEndOfPages <= totalPagesPeople {
-                        SwapiSearch.getAllPeopleInPageSwapiApi(fromPage: countToEndOfPages, getAllNextPages: false){}
-                        countToEndOfPages+=1
-                    }
-                 }
-                // 2. less efficient way - after every call check if "next" in swapi page contain next page url and just then call it (slow loading)
-                //SwapiSearch.getAllPeopleInPageSwapiApi(fromPage: 3, getAllNextPages: true){}
-                
-                //get 20 first images:
-                if let firstLoadingPeopleAmount = modelShared.firstLoadingPeopleAmount {
-                    for index in 0..<firstLoadingPeopleAmount {
-                        let characterName = modelShared.people[index].name
-                        DuckDuckGoSearchImage.image(for: characterName) { _ in
-                            // Each image added by name into dict called imageByCharacterNameDict in ModelShared automatically by this func
-                            // when it get filled with amount of firstLoadingPeopleAmount, if it happened after all 87 people arrived - i stop indicator, reload tbl, and replace image alpha with tbl (show tbl) or if it will happened before all people arrived i will do it in people didSet by Notification post
-                            if modelShared.imageByCharacterNameDict.count == firstLoadingPeopleAmount &&
-                                modelShared.people.count == modelShared.totalNumOfPeopleInSwapiApi {
-                                NotificationCenter.default.post(name: .stopIndicatorReloadMyTbl, object: nil)
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        SwapiApiCharacterDetails.getAllPeopleInPageSwapiApi (fromPage: 1, getAllNextPages: true){}
         
-        // TODO: maybe it will be better to load data api to ModelShared when user click first time on cell/All Movies button, because now it's doing alot of work in the background here (in viewDidLoad), on the other hand it will make user to wait on every time he click on cell/All Movie btn
-        SwapiSearch.getSwapiTypeFromUrlPage(swapiType: .VEHICLES, fromPage: 1, getAllNextPages: true)
-        SwapiSearch.getSwapiTypeFromUrlPage(swapiType: .HOME_WORLD, fromPage: 1, getAllNextPages: true)
-        SwapiSearch.getSwapiTypeFromUrlPage(swapiType: .MOVIES, fromPage: 1, getAllNextPages: true)
-        SwapiSearch.getSwapiTypeFromUrlPage(swapiType: .STAR_SHIPS, fromPage: 1, getAllNextPages: true)
-        
+        SwapiApiTypeDetails.getSwapiTypeFromUrlPage(swapiType: .VEHICLES, fromPage: 1, getAllNextPages: true)
+        SwapiApiTypeDetails.getSwapiTypeFromUrlPage(swapiType: .HOME_WORLD, fromPage: 1, getAllNextPages: true)
+        SwapiApiTypeDetails.getSwapiTypeFromUrlPage(swapiType: .STAR_SHIPS, fromPage: 1, getAllNextPages: true)
+        SwapiApiTypeDetails.getSwapiTypeFromUrlPage(swapiType: .MOVIES, fromPage: 1, getAllNextPages: true)
         
         // MARK: NotificationCenter - addObserver/ listener
-        // 1. Observe to ModelShared people:[Characters] and to DuckDuckGoSearchImage.image in viewDidLoad() when get all people && 20 first images
-        // 2. Observe to ModelShared people:[Characters] when get all the rest images
-        NotificationCenter.default.addObserver(self, selector: #selector(stopIndicatorReloadMyTbl(notification:)), name: .stopIndicatorReloadMyTbl, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(reloadMyTbl(notification:)), name: .reloadMyTbl, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(stopIndicatorReloadTbl(notification:)), name: .stopIndicatorReloadTbl, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadImagesIntoTheirCells(notification:)), name: .reloadImagesIntoTheirCells, object: nil)
+        
     }
     
-    // TODO: Remove observer when class is deallocate from memory, but HVC is always live?
+    // Remove observer when class is deallocate from memory
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
     // Mark: NotificationCenter -  Two Methods
-    func stopIndicatorReloadMyTbl(notification: NSNotification) {
-        tableview.reloadData()
+    func stopIndicatorReloadTbl(notification: NSNotification) {
         self.indicator.stopAnimating()
+        tableview.reloadData()
+        modelShared.lastRowsUpdateWithImages = modelShared.imageByCharacterNameDict.count
         
         UIView.animate(withDuration: 1, animations: {
             self.imageView.alpha = 0
@@ -84,8 +51,18 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         })
     }
     
-    func reloadMyTbl(notification: NSNotification) {
-        tableview.reloadData()
+    func reloadImagesIntoTheirCells(notification: NSNotification) {
+        var rowsIndexPathsForUpdate:[IndexPath] = []
+        
+        let startRowReload = modelShared.lastRowsUpdateWithImages
+        let endRowReload = modelShared.imageByCharacterNameDict.count
+        for index in startRowReload..<endRowReload {
+            let rowIndexPathToUpdate = IndexPath(row: index, section: 0)
+            rowsIndexPathsForUpdate.append(rowIndexPathToUpdate)
+        }
+        print(rowsIndexPathsForUpdate)
+        tableview.reloadRows(at: rowsIndexPathsForUpdate, with: .automatic)
+        modelShared.lastRowsUpdateWithImages = modelShared.imageByCharacterNameDict.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -93,14 +70,13 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return modelShared.people.count
+        //return modelShared.people.count
+        return modelShared.totalNumOfPeopleInSwapiApi ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CharacterTableViewCell
-        
-        
         
         // MARK: Delegate-Style - Set the cell’s delegate to the controller itself.
         cell.delegate = self
@@ -121,7 +97,6 @@ class HomeViewController: UIViewController, UITableViewDelegate, UITableViewData
         } else {
             cell.imageviewOfCharacter.image = UIImage(named: "no_image.jpg")!
         }
-        
         return cell
     }
     

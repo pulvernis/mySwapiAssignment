@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		09555C1B20924B490007FA6D /* SwapiSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C1A20924B490007FA6D /* SwapiSearch.swift */; };
+		09239C70209DF077000DC2C8 /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09239C6F209DF077000DC2C8 /* Character.swift */; };
+		09239C73209DF748000DC2C8 /* SwapiApiCharacterDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09239C72209DF748000DC2C8 /* SwapiApiCharacterDetails.swift */; };
+		09555C1B20924B490007FA6D /* SwapiApiTypeDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C1A20924B490007FA6D /* SwapiApiTypeDetails.swift */; };
 		09555C202092567E0007FA6D /* NotificationKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C1F2092567E0007FA6D /* NotificationKeys.swift */; };
 		09555C222092573A0007FA6D /* CharacterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09555C212092573A0007FA6D /* CharacterTableViewCell.swift */; };
 		09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */; };
@@ -18,7 +20,6 @@
 		09EE0F8B2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */; };
 		09EE0F8D2086445100BCBE3B /* no_image.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09EE0F8C2086445100BCBE3B /* no_image.jpg */; };
 		09EE0F8F2087178400BCBE3B /* star_wars.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09EE0F8E2087178400BCBE3B /* star_wars.jpg */; };
-		09EE0F91208893EA00BCBE3B /* PassDataExplanation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09EE0F90208893EA00BCBE3B /* PassDataExplanation.swift */; };
 		09F3ED0C206E2FA700817941 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09F3ED0B206E2FA700817941 /* AppDelegate.swift */; };
 		09F3ED11206E2FA700817941 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED0F206E2FA700817941 /* Main.storyboard */; };
 		09F3ED13206E2FA700817941 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F3ED12206E2FA700817941 /* Assets.xcassets */; };
@@ -28,7 +29,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		09555C1A20924B490007FA6D /* SwapiSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapiSearch.swift; sourceTree = "<group>"; };
+		09239C6F209DF077000DC2C8 /* Character.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		09239C72209DF748000DC2C8 /* SwapiApiCharacterDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapiApiCharacterDetails.swift; sourceTree = "<group>"; };
+		09555C1A20924B490007FA6D /* SwapiApiTypeDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapiApiTypeDetails.swift; sourceTree = "<group>"; };
 		09555C1F2092567E0007FA6D /* NotificationKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationKeys.swift; sourceTree = "<group>"; };
 		09555C212092573A0007FA6D /* CharacterTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterTableViewCell.swift; sourceTree = "<group>"; };
 		09966F0220778BDE00E71D6F /* CharacterDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterDetailsViewController.swift; sourceTree = "<group>"; };
@@ -39,7 +42,6 @@
 		09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DuckDuckGoSearchImage.swift; sourceTree = "<group>"; };
 		09EE0F8C2086445100BCBE3B /* no_image.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = no_image.jpg; sourceTree = "<group>"; };
 		09EE0F8E2087178400BCBE3B /* star_wars.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = star_wars.jpg; sourceTree = "<group>"; };
-		09EE0F90208893EA00BCBE3B /* PassDataExplanation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PassDataExplanation.swift; sourceTree = "<group>"; };
 		09F3ED08206E2FA700817941 /* MySwapiAssignment.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MySwapiAssignment.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		09F3ED0B206E2FA700817941 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		09F3ED10206E2FA700817941 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -64,12 +66,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		09555C1D209255130007FA6D /* Model */ = {
+		09239C6E209DF043000DC2C8 /* SwapiTypes */ = {
+			isa = PBXGroup;
+			children = (
+				09239C6F209DF077000DC2C8 /* Character.swift */,
+			);
+			name = SwapiTypes;
+			sourceTree = "<group>";
+		};
+		09239C71209DF0EB000DC2C8 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
 				09EE0F8A2085C89D00BCBE3B /* DuckDuckGoSearchImage.swift */,
+				09555C1A20924B490007FA6D /* SwapiApiTypeDetails.swift */,
+				09239C72209DF748000DC2C8 /* SwapiApiCharacterDetails.swift */,
+			);
+			name = Networking;
+			sourceTree = "<group>";
+		};
+		09555C1D209255130007FA6D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				09239C71209DF0EB000DC2C8 /* Networking */,
 				09F3ED1F206E3F5300817941 /* ModelShared.swift */,
-				09555C1A20924B490007FA6D /* SwapiSearch.swift */,
+				09239C6E209DF043000DC2C8 /* SwapiTypes */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -99,7 +119,6 @@
 			children = (
 				09555C252092595E0007FA6D /* Images */,
 				09555C1F2092567E0007FA6D /* NotificationKeys.swift */,
-				09EE0F90208893EA00BCBE3B /* PassDataExplanation.swift */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -304,12 +323,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				09239C70209DF077000DC2C8 /* Character.swift in Sources */,
 				09F3ED20206E3F5300817941 /* ModelShared.swift in Sources */,
 				09966F29207A723200E71D6F /* TableViewCellDelegate.swift in Sources */,
-				09555C1B20924B490007FA6D /* SwapiSearch.swift in Sources */,
+				09555C1B20924B490007FA6D /* SwapiApiTypeDetails.swift in Sources */,
+				09239C73209DF748000DC2C8 /* SwapiApiCharacterDetails.swift in Sources */,
 				09555C202092567E0007FA6D /* NotificationKeys.swift in Sources */,
 				09966F0320778BDE00E71D6F /* CharacterDetailsViewController.swift in Sources */,
-				09EE0F91208893EA00BCBE3B /* PassDataExplanation.swift in Sources */,
 				09966F25207A0B1600E71D6F /* CharacterMoviesViewController.swift in Sources */,
 				09E114A9208F06AF00F341AE /* HomeViewController.swift in Sources */,
 				09F3ED0C206E2FA700817941 /* AppDelegate.swift in Sources */,

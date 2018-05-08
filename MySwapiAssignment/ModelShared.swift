@@ -44,54 +44,42 @@ class ModelShared {
                                                using: passingDataOfCellNumber)
     }
     
-    var firstLoadingPeopleAmount: Int? {
-        didSet{
-            // TODO: After loading 2 first pages of people, check that also the images for them arrived and then stop indicator and reload tbl
-        }
-    }
+    var totalNumOfPeopleInSwapiApi: Int? // initialize only once - from SwapiSearch getAllPeople.. func
+    var isReloadTblFirstTimeForTotalPeopleArrived = false
+    var reloadTblAfterEveryImagesNumAdded = 20
+    var lastRowsUpdateWithImages = 0
+    var lastPeopleUpdate = 0
     
-    var totalNumOfPeopleInEachPageInSwapiApi: Int?
-    
-    var totalNumOfPeopleInSwapiApi: Int? { // initialize only once - when i get the first page of people
+    var people:[Character] = [] { //Update from SwapiSearch getAllPeople... after every page (10 characters)
         didSet {
-            if let totalNumOfPeople = totalNumOfPeopleInSwapiApi { // ambivalent to - if it's not nil
-                if let totalNumOfPeopleInEachPage = totalNumOfPeopleInEachPageInSwapiApi {
-                    totalPagesOfPeopleInSwapiApi = totalNumOfPeople/totalNumOfPeopleInEachPage + 1
-                }
-            }
-        }
-    }
-    
-    // initialize from didSet{} when totalNumOfPeopleInSwapiApi is changing
-    // Use for TVC
-    private (set) var totalPagesOfPeopleInSwapiApi: Int?
-    
-    var people:[Character] = [] {
-        didSet {
+            
+            print("people.count = \(people.count)")
+            
+            // Check if reload tbl is for first time - total characters already in people property (87 characters) then stop indicator replace alpha image with tbl (and change isReloadTblFirstTimeForPeopleTotalArrived boolean to false
             if people.count == totalNumOfPeopleInSwapiApi {
-                if imageByCharacterNameDict.count == firstLoadingPeopleAmount {
-                    NotificationCenter.default.post(name: .stopIndicatorReloadMyTbl, object: nil)
-                }
-                
-                // Get the rest images into imageByCharacterNameDict in ModelShared
-                guard let firstLoadingAmount = modelShared.firstLoadingPeopleAmount,
-                    let totalAmount = modelShared.totalNumOfPeopleInSwapiApi else {
-                        return
-                }
-                for index in firstLoadingAmount..<totalAmount {
-                    let characterName = modelShared.people[index].name
-                    DuckDuckGoSearchImage.image(for: characterName) { _ in
-                        if modelShared.imageByCharacterNameDict.count == totalAmount {
-                            NotificationCenter.default.post(name: .reloadMyTbl, object: nil)
-                        }
-                    }
-                }
+                NotificationCenter.default.post(name: .stopIndicatorReloadTbl, object: nil)
+                isReloadTblFirstTimeForTotalPeopleArrived = true
             }
+            
+            for index in lastPeopleUpdate..<people.count { // 0-10, 10-20 and etc'.. each page
+                let characterName = modelShared.people[index].name
+                DuckDuckGoSearchImage.trySearchAgainOnNameIfError.append(characterName)
+                DuckDuckGoSearchImage.image(for: characterName) { _ in }
+            }
+            lastPeopleUpdate = people.count
         }
     }
     
-    // Images by characters names
-    var imageByCharacterNameDict: [String: Data?] = [:]
+    // Images by characters names - people didSet get images from DuckDuck
+    var imageByCharacterNameDict: [String: Data?] = [:] {
+        didSet {
+            // Check also if the first time reload tbl already done
+            if isReloadTblFirstTimeForTotalPeopleArrived {
+                print("imageByCharacterNameDict.count \(imageByCharacterNameDict.count)")
+                NotificationCenter.default.post(name: .reloadImagesIntoTheirCells, object: nil)
+            }
+        }
+    }
     
     // Set by clicking on row in tbl - will used in CharacterDetailsViewController
     var charcterRowTapped: Character?
@@ -135,14 +123,7 @@ class ModelShared {
 
 }
 
-struct Character {
-    let name, gender, height, mass, eyeColor, hairColor, skinColor, birthYear, homeworldUrl: String
-    let urlForCharacter: String
-    let vehiclesUrlArr: [String] // need to call api again to get vehicles name chatacter owned
-    let starshipsUrlArr: [String] // need to call api again to get starships names character owned
-    let moviesUrlArr: [String]
-    
-}
+
 
 
 
